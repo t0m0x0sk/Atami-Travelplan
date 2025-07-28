@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>熱海1泊2日旅行プランナー</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (Background: #F5F5F4, Cards: #FFFFFF, Accent: #3B82F6) -->
+    <!-- Application Structure Plan: A single-page dashboard with tab-based navigation (Overview, Itinerary, Costs) to allow for quick, non-linear access to information. The itinerary uses a vertical timeline for better visual flow, and the costs are visualized with a donut chart for immediate understanding of proportions. This structure enhances usability by breaking down a long document into digestible, interactive sections. -->
+    <!-- Visualization & Content Choices: Itinerary -> Goal: Organize -> Viz: Vertical Timeline (HTML/CSS) -> Interaction: Day 1/2 Tabs -> Justification: More engaging and sequential than a table. Costs -> Goal: Compare/Proportions -> Viz: Donut Chart (Chart.js/Canvas) -> Interaction: Hover Tooltips -> Justification: Instantly shows the largest cost areas. Costs -> Goal: Inform -> Viz: HTML Table -> Justification: Provides precise figures to supplement the chart. CONFIRMATION: NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #F5F5F4; /* Warm Gray 100 */
+        }
+        .tab-active {
+            background-color: #3B82F6; /* Blue 500 */
+            color: white;
+            border-color: #3B82F6;
+        }
+        .tab-inactive {
+            background-color: white;
+            color: #374151; /* Gray 700 */
+            border-color: #D1D5DB; /* Gray 300 */
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 80px; /* 時間と予定を右にずらす */
+            padding-bottom: 32px; /* pb-8 (2rem) */
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 39px; /* タイムラインの線を調整 */
+            top: 20px;
+            bottom: -20px;
+            width: 2px;
+            background-color: #D1D5DB; /* Gray 300 */
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 31px; /* 青い丸の位置を調整 */
+            top: 12px;
+            height: 18px;
+            width: 18px;
+            background-color: white;
+            border: 4px solid #3B82F6; /* Blue 500 */
+            border-radius: 50%;
+            z-index: 10;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 300px; /* Notion埋め込み向けに調整 */
+            margin-left: auto;
+            margin-right: auto;
+            height: 250px; /* Notion埋め込み向けに調整 */
+            max-height: 70vw; /* 狭い画面でのスケールダウンを考慮 */
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-2xl"> <!-- メインコンテナの最大幅を調整 -->
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">熱海1泊2日旅行のしおり</h1>
+            <p class="text-gray-600 mt-2">4人旅！踊り子号＆レンタカーで満喫プラン</p>
+        </header>
+
+        <nav class="flex justify-center mb-8 bg-white p-2 rounded-lg shadow-sm">
+            <button onclick="showSection('overview')" class="nav-tab tab-active flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="overview">概要</button>
+            <button onclick="showSection('itinerary')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="itinerary">日程</button>
+            <button onclick="showSection('costs')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="costs">費用</button>
+        </nav>
+
+        <main>
+            <section id="overview" class="content-section">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅の概要</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">🗓️</span>
+                            <div>
+                                <h3 class="font-bold">日程</h3>
+                                <p>2025年〇月〇日(土) 〜 〇月〇日(日)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">👥</span>
+                            <div>
+                                <h3 class="font-bold">参加者</h3>
+                                <p>ともさん + 3名 (計4名)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-2xl">🚆</span>
+                            <div>
+                                <h3 class="font-bold">往復交通</h3>
+                                <p>特急 踊り子号</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                             <span class="text-2xl">🚗</span>
+                            <div>
+                                <h3 class="font-bold">現地交通</h3>
+                                <p>レンタカー (S-Aクラス想定)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 col-span-1 md:col-span-2">
+                             <span class="text-2xl">🏨</span>
+                            <div>
+                                <h3 class="font-bold">宿泊先</h3>
+                                <p>あじろハウス</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="itinerary" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅の工程</h2>
+                    <div class="flex border border-gray-300 rounded-lg mb-6">
+                        <button id="day1-tab" onclick="showDay('day1')" class="day-tab tab-active flex-1 p-3 font-bold rounded-l-md">1日目</button>
+                        <button id="day2-tab" onclick="showDay('day2')" class="day-tab tab-inactive flex-1 p-3 font-bold rounded-r-md border-l border-gray-300">2日目</button>
+                    </div>
+
+                    <div id="day1-content" class="day-content">
+                        <div class="relative"> <!-- pl-8を削除 -->
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">8:00</p>
+                                <h3 class="text-lg font-bold text-gray-900">新宿駅出発 (踊り子号) 🚆</h3>
+                                <p class="text-gray-600">約90分移動。車窓からの景色も楽しもう！</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">9:30</p>
+                                <h3 class="text-lg font-bold text-gray-900">熱海駅到着 → 観光準備</h3>
+                                <p class="text-gray-600">駅ロッカーに荷物預け、身軽になって観光へ！</p>
+                            </div>
+                             <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">10:00</p>
+                                <h3 class="text-lg font-bold text-gray-900">ロープウェイで山頂へ 🚠</h3>
+                                <p class="text-gray-600">往復900円/人。絶景を楽しもう！</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">10:15</p>
+                                <h3 class="text-lg font-bold text-gray-900">熱海秘宝館 (メイン観光) ✨</h3>
+                                <p class="text-gray-600">約1時間。入館料1,900円/人。ロープウェイ山頂駅すぐ。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">11:30</p>
+                                <h3 class="text-lg font-bold text-gray-900">熱海城 or トリックアート迷宮館 🏰</h3>
+                                <p class="text-gray-600">当日の気分で選択 (30〜60分)。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">13:00</p>
+                                <h3 class="text-lg font-bold text-gray-900">昼食 (熱海銀座商店街) 🍜</h3>
+                                <p class="text-gray-600">散策＆ランチ。食べ歩きも楽しんでね！</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">14:45</p>
+                                <h3 class="text-lg font-bold text-gray-900">レンタカーを借りる 🚗</h3>
+                                <p class="text-gray-600">トヨタ／日産／ニッポンなど。徒歩3分圏内。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">15:00</p>
+                                <h3 class="text-lg font-bold text-gray-900">食材買い出し 🛒</h3>
+                                <p class="text-gray-600">道の駅伊東マリンタウンで新鮮魚介、マックスバリュでその他を調達。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">16:30</p>
+                                <h3 class="text-lg font-bold text-gray-900">宿 (あじろハウス) へ移動・チェックイン 🏨</h3>
+                                <p class="text-gray-600">チェックイン15:00から。BBQ準備・ゆっくりタイム。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">17:30~</p>
+                                <h3 class="text-lg font-bold text-gray-900">BBQ開始 🔥</h3>
+                                <p class="text-gray-600">利用時間9:00〜21:00。電気グリルのみ。利用料1,500円/組。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="day2-content" class="day-content hidden">
+                        <div class="relative"> <!-- pl-8を削除 -->
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">9:00</p>
+                                <h3 class="text-lg font-bold text-gray-900">朝食・チェックアウト準備 ☕</h3>
+                                <p class="text-gray-600">ゴミ処理なども忘れずにね。チェックアウト10:00。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">10:30</p>
+                                <h3 class="text-lg font-bold text-gray-900">レンタカーで来宮神社へ 🚗</h3>
+                                <p class="text-gray-600">約20分。駐車場を利用。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">11:00</p>
+                                <h3 class="text-lg font-bold text-gray-900">来宮神社を参拝＆散策 🌳</h3>
+                                <p class="text-gray-600">大楠のパワーを感じよう！拝観料無料。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">12:15</p>
+                                <h3 class="text-lg font-bold text-gray-900">給油＆レンタカー返却</h3>
+                                <p class="text-gray-600">熱海駅近くのENEOSなどで給油後、返却。</p>
+                            </div>
+                             <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">12:45</p>
+                                <h3 class="text-lg font-bold text-gray-900">荷物をロッカーへ</h3>
+                                <p class="text-gray-600">身軽になって行動開始！</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">13:30</p>
+                                <h3 class="text-lg font-bold text-gray-900">昼食 (熱海サンビーチ近辺) 🍽️</h3>
+                                <p class="text-gray-600">海が見えるカフェやレストランでランチと一緒にお酒も！</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">15:00</p>
+                                <h3 class="text-lg font-bold text-gray-900">熱海駅へ移動</h3>
+                                <p class="text-gray-600">徒歩約10分。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">15:30 or 16:00</p>
+                                <h3 class="text-lg font-bold text-gray-900">熱海駅発 → 新宿駅へ 🚆</h3>
+                                <p class="text-gray-600">踊り子号で帰路へ。お疲れ様でした！</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="costs" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">費用の目安</h2>
+                    <p class="text-center text-gray-600 mb-6">主要な費用の内訳です。グラフをタップまたはホバーすると詳細が表示されます。</p>
+                    <div class="chart-container mb-8">
+                        <canvas id="costsChart"></canvas>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-4 border rounded-lg">
+                            <h3 class="font-bold text-lg">交通費 (踊り子号)</h3>
+                            <p class="text-gray-600">4人合計: <span class="font-bold text-xl">約34,000円</span> (32,000円〜36,000円)</p>
+                        </div>
+                        <div class="p-4 border rounded-lg">
+                            <h3 class="font-bold text-lg">宿泊費 (あじろハウス)</h3>
+                            <p class="text-gray-600">4人合計: <span class="font-bold text-xl">46,300円</span> (宿代+清掃代+BBQ利用料)</p>
+                        </div>
+                        <div class="p-4 border rounded-lg">
+                            <h3 class="font-bold text-lg">レンタカー代</h3>
+                            <p class="text-gray-600">4人合計: <span class="font-bold text-xl">15,000円</span> (ガソリン代込み、駐車場代含まず)</p>
+                        </div>
+                        <div class="p-4 border rounded-lg">
+                            <h3 class="font-bold text-lg">BBQ食材費</h3>
+                            <p class="text-gray-600">4人合計: <span class="font-bold text-xl">10,000円</span></p>
+                        </div>
+                        <div class="p-4 bg-blue-50 border-blue-200 border rounded-lg mt-6">
+                            <h3 class="font-bold text-lg text-blue-800">合計費用 (4人分)</h3>
+                            <p class="text-blue-700"><span class="font-bold text-2xl">約105,300円</span> (103,300円〜107,300円)</p>
+                            <hr class="my-2">
+                            <h3 class="font-bold text-lg text-blue-800">1人あたり</h3>
+                            <p class="text-blue-700"><span class="font-bold text-2xl">約26,325円</span> (25,825円〜26,825円)</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('tab-inactive');
+            });
+            const activeTab = document.querySelector(`.nav-tab[data-section="${sectionId}"]`);
+            activeTab.classList.add('tab-active');
+            activeTab.classList.remove('tab-inactive');
+        }
+
+        function showDay(dayId) {
+            document.querySelectorAll('.day-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`${dayId}-content`).classList.remove('hidden');
+
+            document.querySelectorAll('.day-tab').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('tab-inactive');
+            });
+            const activeTab = document.getElementById(`${dayId}-tab`);
+            activeTab.classList.add('tab-active');
+            activeTab.classList.remove('tab-inactive');
+        }
+
+        const ctx = document.getElementById('costsChart').getContext('2d');
+        const costsChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['交通費', '宿泊費', 'レンタカー代', 'BBQ食材費'],
+                datasets: [{
+                    label: '費用内訳',
+                    data: [34000, 46300, 15000, 10000],
+                    backgroundColor: [
+                        '#60A5FA', // Blue 400
+                        '#3B82F6', // Blue 500
+                        '#2563EB', // Blue 600
+                        '#1D4ED8'  // Blue 700
+                    ],
+                    borderColor: '#F5F5F4',
+                    borderWidth: 4,
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: {
+                                size: 14,
+                                family: "'Noto Sans JP', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(context.parsed);
+                                }
+                                return label;
+                            }
+                        },
+                        titleFont: {
+                           size: 16,
+                           family: "'Noto Sans JP', sans-serif"
+                        },
+                        bodyFont: {
+                           size: 14,
+                           family: "'Noto Sans JP', sans-serif"
+                        },
+                        padding: 10,
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        titleColor: 'white',
+                        bodyColor: 'white'
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+    </script>
+</body>
+</html>
