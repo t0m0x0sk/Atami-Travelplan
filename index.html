@@ -9,19 +9,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Warm Neutrals (Background: #F5F5F4, Cards: #FFFFFF, Accent: #3B82F6) -->
-    <!-- Application Structure Plan: A single-page dashboard with tab-based navigation (Overview, Itinerary, Costs) to allow for quick, non-linear access to information. The itinerary uses a vertical timeline for better visual flow, and the costs are visualized with a donut chart for immediate understanding of proportions. This structure enhances usability by breaking down a long document into digestible, interactive sections. -->
-    <!-- Visualization & Content Choices: Itinerary -> Goal: Organize -> Viz: Vertical Timeline (HTML/CSS) -> Interaction: Day 1/2 Tabs -> Justification: More engaging and sequential than a table. Costs -> Goal: Compare/Proportions -> Viz: Donut Chart (Chart.js/Canvas) -> Interaction: Hover Tooltips -> Justification: Instantly shows the largest cost areas. Costs -> Goal: Inform -> Viz: HTML Table -> Justification: Provides precise figures to supplement the chart. CONFIRMATION: NO SVG/Mermaid used. -->
+    <!-- Chosen Palette: Tropical Breeze (Background: #FDF5E6, Accent Blue/Green: #20B2AA, Accent Coral: #FF7F50, Cards: #FFFFFF) -->
+    <!-- Application Structure Plan: A single-page dashboard with tab-based navigation (Travel Plan, Costs, Links, Overview) to allow for quick, non-linear access to information. The itinerary uses a vertical timeline for better visual flow, and the costs are visualized with a donut chart for immediate understanding of proportions. A new "Links" section provides quick access to external resources. The Overview section is now a placeholder, intended to be populated externally in Notion. This structure enhances usability by breaking down a long document into digestible, interactive sections and adds a central point for external references, while accommodating external content. -->
+    <!-- Visualization & Content Choices: Travel Plan -> Goal: Organize -> Viz: Vertical Timeline (HTML/CSS) -> Interaction: Day 1/2 Tabs -> Justification: More engaging and sequential than a table, with improved readability. Costs -> Goal: Compare/Proportions -> Viz: Donut Chart (Chart.js/Canvas) -> Interaction: Hover Tooltips -> Justification: Instantly shows the largest cost areas on a per-person basis. Costs -> Goal: Inform -> Viz: HTML Text Blocks -> Justification: Provides precise per-person figures. Links -> Goal: Inform/Access -> Viz: List of Links (HTML) -> Interaction: Clickable URLs -> Justification: Centralizes external resources for user convenience. Overview -> Goal: Placeholder -> Viz: Text Placeholder -> Justification: Accommodates external content management by the user. CONFIRMATION: NO SVG/Mermaid used. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
-            background-color: #F5F5F4; /* Warm Gray 100 */
+            background-color: #FDF5E6; /* Light creamy beige for tropical feel */
         }
         .tab-active {
-            background-color: #3B82F6; /* Blue 500 */
+            background-color: #20B2AA; /* LightSeaGreen for tropical accent */
             color: white;
-            border-color: #3B82F6;
+            border-color: #20B2AA;
         }
         .tab-inactive {
             background-color: white;
@@ -52,7 +52,7 @@
             height: 18px;
             width: 18px;
             background-color: white;
-            border: 4px solid #3B82F6; /* Blue 500 */
+            border: 4px solid #20B2AA; /* LightSeaGreen for tropical accent */
             border-radius: 50%;
             z-index: 10;
         }
@@ -65,11 +65,28 @@
             height: 250px; /* Notion埋め込み向けに調整 */
             max-height: 70vw; /* 狭い画面でのスケールダウンを考慮 */
         }
+        .link-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .link-item span {
+            margin-right: 8px;
+            font-size: 1.25rem; /* text-xl */
+        }
+        .link-item a {
+            color: #20B2AA; /* LightSeaGreen */
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .link-item a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
-<body class="antialiased text-gray-800">
+<body class="antialiased text-gray-800" onload="showSection('travel-plan')">
 
-    <div class="container mx-auto p-4 md:p-8 max-w-2xl"> <!-- メインコンテナの最大幅を調整 -->
+    <div class="container mx-auto p-4 md:p-8 max-w-2xl">
         
         <header class="text-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900">熱海1泊2日旅行のしおり</h1>
@@ -77,65 +94,23 @@
         </header>
 
         <nav class="flex justify-center mb-8 bg-white p-2 rounded-lg shadow-sm">
-            <button onclick="showSection('overview')" class="nav-tab tab-active flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="overview">概要</button>
-            <button onclick="showSection('itinerary')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="itinerary">日程</button>
+            <button onclick="showSection('travel-plan')" class="nav-tab tab-active flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="travel-plan">旅のプラン</button>
             <button onclick="showSection('costs')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="costs">費用</button>
+            <button onclick="showSection('links-collection')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="links-collection">リンク集</button>
+            <button onclick="showSection('overview')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="overview">概要</button>
         </nav>
 
         <main>
-            <section id="overview" class="content-section">
+            <section id="travel-plan" class="content-section">
                 <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅の概要</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
-                        <div class="flex items-center space-x-3">
-                            <span class="text-2xl">🗓️</span>
-                            <div>
-                                <h3 class="font-bold">日程</h3>
-                                <p>2025年〇月〇日(土) 〜 〇月〇日(日)</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <span class="text-2xl">👥</span>
-                            <div>
-                                <h3 class="font-bold">参加者</h3>
-                                <p>ともさん + 3名 (計4名)</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <span class="text-2xl">🚆</span>
-                            <div>
-                                <h3 class="font-bold">往復交通</h3>
-                                <p>特急 踊り子号</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                             <span class="text-2xl">🚗</span>
-                            <div>
-                                <h3 class="font-bold">現地交通</h3>
-                                <p>レンタカー (S-Aクラス想定)</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3 col-span-1 md:col-span-2">
-                             <span class="text-2xl">🏨</span>
-                            <div>
-                                <h3 class="font-bold">宿泊先</h3>
-                                <p>あじろハウス</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="itinerary" class="content-section hidden">
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅の工程</h2>
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅のプラン</h2>
                     <div class="flex border border-gray-300 rounded-lg mb-6">
                         <button id="day1-tab" onclick="showDay('day1')" class="day-tab tab-active flex-1 p-3 font-bold rounded-l-md">1日目</button>
                         <button id="day2-tab" onclick="showDay('day2')" class="day-tab tab-inactive flex-1 p-3 font-bold rounded-r-md border-l border-gray-300">2日目</button>
                     </div>
 
                     <div id="day1-content" class="day-content">
-                        <div class="relative"> <!-- pl-8を削除 -->
+                        <div class="relative">
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">8:00</p>
@@ -199,7 +174,7 @@
                         </div>
                     </div>
                     <div id="day2-content" class="day-content hidden">
-                        <div class="relative"> <!-- pl-8を削除 -->
+                        <div class="relative">
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">9:00</p>
@@ -255,36 +230,93 @@
 
             <section id="costs" class="content-section hidden">
                 <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">費用の目安</h2>
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">1人あたりの費用目安</h2>
                     <p class="text-center text-gray-600 mb-6">主要な費用の内訳です。グラフをタップまたはホバーすると詳細が表示されます。</p>
                     <div class="chart-container mb-8">
                         <canvas id="costsChart"></canvas>
                     </div>
                     <div class="space-y-4">
                         <div class="p-4 border rounded-lg">
-                            <h3 class="font-bold text-lg">交通費 (踊り子号)</h3>
-                            <p class="text-gray-600">4人合計: <span class="font-bold text-xl">約34,000円</span> (32,000円〜36,000円)</p>
+                            <h3 class="font-bold text-lg">交通費</h3>
+                            <p class="text-gray-600">1人あたりの概算費用: <span class="font-bold text-xl">約8,500円</span> (8,000円〜9,000円)</p>
                         </div>
                         <div class="p-4 border rounded-lg">
-                            <h3 class="font-bold text-lg">宿泊費 (あじろハウス)</h3>
-                            <p class="text-gray-600">4人合計: <span class="font-bold text-xl">46,300円</span> (宿代+清掃代+BBQ利用料)</p>
+                            <h3 class="font-bold text-lg">宿泊費</h3>
+                            <p class="text-gray-600">1人あたりの概算費用: <span class="font-bold text-xl">11,575円</span> (宿代+清掃代+BBQ利用料)</p>
                         </div>
                         <div class="p-4 border rounded-lg">
                             <h3 class="font-bold text-lg">レンタカー代</h3>
-                            <p class="text-gray-600">4人合計: <span class="font-bold text-xl">15,000円</span> (ガソリン代込み、駐車場代含まず)</p>
+                            <p class="text-gray-600">1人あたりの概算費用: <span class="font-bold text-xl">3,750円</span> (ガソリン代込み、駐車場代含まず)</p>
                         </div>
                         <div class="p-4 border rounded-lg">
                             <h3 class="font-bold text-lg">BBQ食材費</h3>
-                            <p class="text-gray-600">4人合計: <span class="font-bold text-xl">10,000円</span></p>
+                            <p class="text-gray-600">1人あたりの概算費用: <span class="font-bold text-xl">2,500円</span></p>
                         </div>
                         <div class="p-4 bg-blue-50 border-blue-200 border rounded-lg mt-6">
-                            <h3 class="font-bold text-lg text-blue-800">合計費用 (4人分)</h3>
-                            <p class="text-blue-700"><span class="font-bold text-2xl">約105,300円</span> (103,300円〜107,300円)</p>
-                            <hr class="my-2">
-                            <h3 class="font-bold text-lg text-blue-800">1人あたり</h3>
+                            <h3 class="font-bold text-lg text-blue-800">合計費用 (1人あたり)</h3>
                             <p class="text-blue-700"><span class="font-bold text-2xl">約26,325円</span> (25,825円〜26,825円)</p>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <section id="links-collection" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">主要リンク集</h2>
+                    <p class="text-gray-600 mb-6">熱海旅行で役立つ各施設の公式サイトや関連情報へのリンクだよ。</p>
+                    <div class="space-y-4">
+                        <div class="link-item">
+                            <span role="img" aria-label="ropeway">🚠</span>
+                            <a href="https://www.atami-ropeway.jp/" target="_blank" rel="noopener noreferrer">熱海ロープウェイ</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="museum">✨</span>
+                            <a href="https://www.atami-ropeway.jp/atami-hihoukan/" target="_blank" rel="noopener noreferrer">熱海秘宝館</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="castle">🏰</span>
+                            <a href="https://atamijyo.com/" target="_blank" rel="noopener noreferrer">熱海城</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="trick art">🖼️</span>
+                            <a href="https://www.atami-trickart.com/" target="_blank" rel="noopener noreferrer">熱海トリックアート迷宮館</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="fish market">🐟</span>
+                            <a href="https://ito-marinetown.co.jp/" target="_blank" rel="noopener noreferrer">道の駅伊東マリンタウン</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="supermarket">🛒</span>
+                            <a href="https://www.mv-tokai.co.jp/store/14341/" target="_blank" rel="noopener noreferrer">マックスバリュ熱海店</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="house">🏡</span>
+                            <a href="https://izuminpaku-yoyaku.com/atami/ajirohouse/" target="_blank" rel="noopener noreferrer">あじろハウス</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="shrine">⛩️</span>
+                            <a href="https://kinomiya.or.jp/" target="_blank" rel="noopener noreferrer">来宮神社</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="gas station">⛽</span>
+                            <a href="https://www.eneos.co.jp/ss/search/ss_detail.php?sscode=304191" target="_blank" rel="noopener noreferrer">ENEOS GS熱海SS (給油)</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="locker">🗄️</span>
+                            <a href="https://www.ataminews.gr.jp/useful/coinlocker/" target="_blank" rel="noopener noreferrer">熱海駅ロッカー情報</a>
+                        </div>
+                        <div class="link-item">
+                            <span role="img" aria-label="beach">🏖️</span>
+                            <a href="https://www.ataminews.gr.jp/spot/123/" target="_blank" rel="noopener noreferrer">熱海サンビーチ</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="overview" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅の概要</h2>
+                    <p class="text-gray-600 text-center py-8">このページは別途Notionで作成されます。</p>
                 </div>
             </section>
         </main>
@@ -327,15 +359,15 @@
             data: {
                 labels: ['交通費', '宿泊費', 'レンタカー代', 'BBQ食材費'],
                 datasets: [{
-                    label: '費用内訳',
-                    data: [34000, 46300, 15000, 10000],
+                    label: '費用内訳 (1人あたり)',
+                    data: [8500, 11575, 3750, 2500], // 1人あたりの費用に調整
                     backgroundColor: [
-                        '#60A5FA', // Blue 400
-                        '#3B82F6', // Blue 500
-                        '#2563EB', // Blue 600
-                        '#1D4ED8'  // Blue 700
+                        '#008080',   // Teal
+                        '#20B2AA',   // LightSeaGreen
+                        '#66CDAA',   // MediumAquamarine
+                        '#FF7F50'    // Coral
                     ],
-                    borderColor: '#F5F5F4',
+                    borderColor: '#FDF5E6', /* Background color */
                     borderWidth: 4,
                     hoverOffset: 8
                 }]
