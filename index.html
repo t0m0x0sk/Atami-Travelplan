@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Tropical Breeze (Background: #FDF5E6, Accent Blue/Green: #20B2AA, Accent Coral: #FF7F50, Cards: #FFFFFF) -->
+    <!-- Application Structure Plan: A single-page dashboard with tab-based navigation (Travel Plan, Costs, Links, Overview) to allow for quick, non-linear access to information. The itinerary uses a vertical timeline for better visual flow, and the costs are visualized with a donut chart for immediate understanding of proportions. A new "Links" section provides quick access to external resources. The Overview section is now a placeholder, intended to be populated externally in Notion. This structure enhances usability by breaking down a long document into digestible, interactive sections and adds a central point for external references, while accommodating external content. -->
+    <!-- Visualization & Content Choices: Travel Plan -> Goal: Organize -> Viz: Vertical Timeline (HTML/CSS) -> Interaction: Day 1/2 Tabs -> Justification: More engaging and sequential than a table, with improved readability. Costs -> Goal: Compare/Proportions -> Viz: Donut Chart (Chart.js/Canvas) -> Interaction: Hover Tooltips -> Justification: Instantly shows the largest cost areas on a per-person basis. Costs -> Goal: Inform -> Viz: HTML Text Blocks -> Justification: Provides precise per-person figures. Links -> Goal: Inform/Access -> Viz: List of Links (HTML) -> Interaction: Clickable URLs -> Justification: Centralizes external resources for user convenience. Overview -> Goal: Placeholder -> Viz: Text Placeholder -> Justification: Accommodates external content management by the user. CONFIRMATION: NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -109,55 +113,55 @@
                         <div class="relative">
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">10:00</p>
+                                <p class="font-bold text-gray-500">12:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">新宿駅出発 (踊り子号) 🚆</h3>
                                 <p class="text-gray-600">約90分移動。車窓からの景色も楽しもう！</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">11:30</p>
+                                <p class="font-bold text-gray-500">13:30</p>
                                 <h3 class="text-lg font-bold text-gray-900">熱海駅到着 → 観光準備</h3>
                                 <p class="text-gray-600">駅ロッカーに荷物預け、身軽になって観光へ！</p>
                             </div>
                              <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">12:00</p>
+                                <p class="font-bold text-gray-500">13:45</p>
                                 <h3 class="text-lg font-bold text-gray-900">ロープウェイで山頂へ 🚠</h3>
                                 <p class="text-gray-600">往復900円/人。絶景を楽しもう！</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">12:15</p>
-                                <h3 class="text-lg font-bold text-gray-900">熱海秘宝館 (メイン観光) ✨</h3>
-                                <p class="text-gray-600">約1時間。入館料1,900円/人。ロープウェイ山頂駅すぐ。</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">13:30</p>
-                                <h3 class="text-lg font-bold text-gray-900">熱海城 or トリックアート迷宮館 🏰</h3>
-                                <p class="text-gray-600">当日の気分で選択 (30〜60分)。</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">14:00</p>
-                                <h3 class="text-lg font-bold text-gray-900">昼食 (熱海銀座商店街) 🍜</h3>
-                                <p class="text-gray-600">散策＆ランチ。食べ歩きも楽しんでね！</p>
+                                <h3 class="text-lg font-bold text-gray-900">熱海秘宝館 (メイン観光) ✨</h3>
+                                <p class="text-gray-600">約45分。入館料1,900円/人。ロープウェイ山頂駅すぐ。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">15:45</p>
+                                <p class="font-bold text-gray-500">14:45</p>
+                                <h3 class="text-lg font-bold text-gray-900">熱海城 or トリックアート迷宮館 🏰</h3>
+                                <p class="text-gray-600">約45分。当日の気分で選択。</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">15:30</p>
+                                <h3 class="text-lg font-bold text-gray-900">昼食 (熱海銀座商店街) 🍜</h3>
+                                <p class="text-gray-600">約60分。散策＆ランチ。食べ歩きも楽しんでね！</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <p class="font-bold text-gray-500">16:45</p>
                                 <h3 class="text-lg font-bold text-gray-900">レンタカーを借りる 🚗</h3>
                                 <p class="text-gray-600">トヨタ／日産／ニッポンなど。徒歩3分圏内。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">16:00</p>
+                                <p class="font-bold text-gray-500">17:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">食材買い出し 🛒</h3>
                                 <p class="text-gray-600">道の駅伊東マリンタウンで新鮮魚介、マックスバリュでその他を調達。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">17:30</p>
+                                <p class="font-bold text-gray-500">18:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">宿 (あじろハウス) へ移動・チェックイン 🏨</h3>
                                 <p class="text-gray-600">チェックイン15:00から。BBQ準備・ゆっくりタイム。</p>
                             </div>
@@ -219,6 +223,25 @@
                                 <h3 class="text-lg font-bold text-gray-900">熱海駅発 → 新宿駅へ 🚆</h3>
                                 <p class="text-gray-600">踊り子号で帰路へ。お疲れ様でした！</p>
                             </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-gray-300">
+                        <h3 class="text-xl font-bold mb-4 text-gray-900">踊り子号 時刻表（目安）</h3>
+                        <p class="text-gray-600 mb-2">※最新の情報はJR東日本の公式サイトで必ずご確認ください。</p>
+                        <div class="mb-4">
+                            <h4 class="font-bold text-lg text-gray-800">往路：8月24日(日) 新宿 → 熱海</h4>
+                            <ul class="list-disc list-inside text-gray-700 ml-4">
+                                <li>**踊り子9号**: 新宿 12:00発 → 熱海 13:20着</li>
+                                <li>サフィール踊り子5号: 新宿 12:25発 → 熱海 13:51着 (プレミアムグリーン車のみ)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-gray-800">復路：8月25日(月) 熱海 → 新宿方面</h4>
+                            <ul class="list-disc list-inside text-gray-700 ml-4">
+                                <li>サフィール踊り子2号: 熱海 15:30発 → 東京 16:49着 (プレミアムグリーン車のみ)</li>
+                                <li>サフィール踊り子4号: 熱海 17:57発 → 東京 19:20着 (プレミアムグリーン車のみ)</li>
+                                <li>※新宿駅直通の踊り子号は、曜日や時期により運行が異なります。東京駅乗り換えで新宿へ向かうことも可能です。</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -414,4 +437,3 @@
     </script>
 </body>
 </html>
-
