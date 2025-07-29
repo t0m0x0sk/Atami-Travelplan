@@ -9,10 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Tropical Breeze (Background: #FDF5E6, Accent Blue/Green: #20B2AA, Accent Coral: #FF7F50, Cards: #FFFFFF) -->
-    <!-- Application Structure Plan: A single-page dashboard with tab-based navigation (Travel Plan, Costs, Links, Overview) to allow for quick, non-linear access to information. The itinerary uses a vertical timeline for better visual flow, and the costs are visualized with a donut chart for immediate understanding of proportions. A new "Links" section provides quick access to external resources. The Overview section is now a placeholder, intended to be populated externally in Notion. This structure enhances usability by breaking down a long document into digestible, interactive sections and adds a central point for external references, while accommodating external content. -->
-    <!-- Visualization & Content Choices: Travel Plan -> Goal: Organize -> Viz: Vertical Timeline (HTML/CSS) -> Interaction: Day 1/2 Tabs -> Justification: More engaging and sequential than a table, with improved readability. Costs -> Goal: Compare/Proportions -> Viz: Donut Chart (Chart.js/Canvas) -> Interaction: Hover Tooltips -> Justification: Instantly shows the largest cost areas on a per-person basis. Costs -> Goal: Inform -> Viz: HTML Text Blocks -> Justification: Provides precise per-person figures. Links -> Goal: Inform/Access -> Viz: List of Links (HTML) -> Interaction: Clickable URLs -> Justification: Centralizes external resources for user convenience. Overview -> Goal: Placeholder -> Viz: Text Placeholder -> Justification: Accommodates external content management by the user. CONFIRMATION: NO SVG/Mermaid used. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Noto Sans JP', sans-serif;
@@ -113,61 +109,61 @@
                         <div class="relative">
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">8:00</p>
+                                <p class="font-bold text-gray-500">10:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">新宿駅出発 (踊り子号) 🚆</h3>
                                 <p class="text-gray-600">約90分移動。車窓からの景色も楽しもう！</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">9:30</p>
+                                <p class="font-bold text-gray-500">11:30</p>
                                 <h3 class="text-lg font-bold text-gray-900">熱海駅到着 → 観光準備</h3>
                                 <p class="text-gray-600">駅ロッカーに荷物預け、身軽になって観光へ！</p>
                             </div>
                              <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">10:00</p>
+                                <p class="font-bold text-gray-500">12:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">ロープウェイで山頂へ 🚠</h3>
                                 <p class="text-gray-600">往復900円/人。絶景を楽しもう！</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">10:15</p>
+                                <p class="font-bold text-gray-500">12:15</p>
                                 <h3 class="text-lg font-bold text-gray-900">熱海秘宝館 (メイン観光) ✨</h3>
                                 <p class="text-gray-600">約1時間。入館料1,900円/人。ロープウェイ山頂駅すぐ。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">11:30</p>
+                                <p class="font-bold text-gray-500">13:30</p>
                                 <h3 class="text-lg font-bold text-gray-900">熱海城 or トリックアート迷宮館 🏰</h3>
                                 <p class="text-gray-600">当日の気分で選択 (30〜60分)。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">13:00</p>
+                                <p class="font-bold text-gray-500">14:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">昼食 (熱海銀座商店街) 🍜</h3>
                                 <p class="text-gray-600">散策＆ランチ。食べ歩きも楽しんでね！</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">14:45</p>
+                                <p class="font-bold text-gray-500">15:45</p>
                                 <h3 class="text-lg font-bold text-gray-900">レンタカーを借りる 🚗</h3>
                                 <p class="text-gray-600">トヨタ／日産／ニッポンなど。徒歩3分圏内。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">15:00</p>
+                                <p class="font-bold text-gray-500">16:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">食材買い出し 🛒</h3>
                                 <p class="text-gray-600">道の駅伊東マリンタウンで新鮮魚介、マックスバリュでその他を調達。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">16:30</p>
+                                <p class="font-bold text-gray-500">17:30</p>
                                 <h3 class="text-lg font-bold text-gray-900">宿 (あじろハウス) へ移動・チェックイン 🏨</h3>
                                 <p class="text-gray-600">チェックイン15:00から。BBQ準備・ゆっくりタイム。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500">17:30~</p>
+                                <p class="font-bold text-gray-500">18:30~</p>
                                 <h3 class="text-lg font-bold text-gray-900">BBQ開始 🔥</h3>
                                 <p class="text-gray-600">利用時間9:00〜21:00。電気グリルのみ。利用料1,500円/組。</p>
                             </div>
@@ -418,3 +414,4 @@
     </script>
 </body>
 </html>
+
