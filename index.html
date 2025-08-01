@@ -10,8 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Tropical Breeze (Background: #FDF5E6, Accent Blue/Green: #20B2AA, Accent Coral: #FF7F50, Cards: #FFFFFF) -->
-    <!-- Application Structure Plan: A single-page dashboard with tab-based navigation (Travel Plan, Costs, Links, Overview) to allow for quick, non-linear access to information. The itinerary uses a vertical timeline for better visual flow, and the costs are visualized with a donut chart for immediate understanding of proportions. A new "Links" section provides quick access to external resources. The Overview section is now a placeholder, intended to be populated externally in Notion. This structure enhances usability by breaking down a long document into digestible, interactive sections and adds a central point for external references, while accommodating external content. -->
-    <!-- Visualization & Content Choices: Travel Plan -> Goal: Organize -> Viz: Vertical Timeline (HTML/CSS) -> Interaction: Day 1/2 Tabs -> Justification: More engaging and sequential than a table, with improved readability. Costs -> Goal: Compare/Proportions -> Viz: Donut Chart (Chart.js/Canvas) -> Interaction: Hover Tooltips -> Justification: Instantly shows the largest cost areas on a per-person basis. Costs -> Goal: Inform -> Viz: HTML Text Blocks -> Justification: Provides precise per-person figures. Links -> Goal: Inform/Access -> Viz: List of Links (HTML) -> Interaction: Clickable URLs -> Justification: Centralizes external resources for user convenience. Overview -> Goal: Placeholder -> Viz: Text Placeholder -> Justification: Accommodates external content management by the user. CONFIRMATION: NO SVG/Mermaid used. -->
+    <!-- Application Structure Plan: A single-page dashboard with tab-based navigation (Travel Plan, Costs, Links, Lunch Candidates, Overview) to allow for quick, non-linear access to information. The itinerary uses a vertical timeline for better visual flow, and the costs are visualized with a donut chart for immediate understanding of proportions. A new "Links" section provides quick access to external resources. The Overview section is now a placeholder, intended to be populated externally in Notion. A new "Lunch Candidates" section lists recommended restaurants by category with details, now with Day 1/Day 2 switching. This structure enhances usability by breaking down a long document into digestible, interactive sections and adds central points for external references and specific dining options. -->
+    <!-- Visualization & Content Choices: Travel Plan -> Goal: Organize -> Viz: Vertical Timeline (HTML/CSS) -> Interaction: Day 1/2 Tabs -> Justification: More engaging and sequential than a table, with improved readability. Costs -> Goal: Compare/Proportions -> Viz: Donut Chart (Chart.js/Canvas) -> Interaction: Hover Tooltips -> Justification: Instantly shows the largest cost areas on a per-person basis. Costs -> Goal: Inform -> Viz: HTML Text Blocks -> Justification: Provides precise per-person figures. Links -> Goal: Inform/Access -> Viz: List of Links (HTML) -> Interaction: Clickable URLs -> Justification: Centralizes external resources for user convenience. Lunch Candidates -> Goal: Inform/Choose -> Viz: Categorized List with Details (HTML) -> Interaction: Day 1/2 Tabs, Clickable URLs -> Justification: Provides curated dining options with essential information and easy switching for different days. Overview -> Goal: Placeholder -> Viz: Text Placeholder -> Justification: Accommodates external content management by the user. CONFIRMATION: NO SVG/Mermaid used. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -82,6 +82,16 @@
         .link-item a:hover {
             text-decoration: underline;
         }
+        .restaurant-item {
+            margin-bottom: 1.5rem; /* mb-6 */
+            padding-bottom: 1.5rem; /* pb-6 */
+            border-bottom: 1px solid #E5E7EB; /* border-b border-gray-200 */
+        }
+        .restaurant-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
     </style>
 </head>
 <body class="antialiased text-gray-800" onload="showSection('travel-plan')">
@@ -89,24 +99,25 @@
     <div class="container mx-auto p-4 md:p-8 max-w-2xl">
         
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">熱海1泊2日旅行のしおり</h1>
-            <p class="text-gray-600 mt-2">4人旅！踊り子号＆レンタカーで満喫プラン</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">熱海1泊2日旅行のしおり 🏖️</h1>
+            <p class="text-gray-600 mt-2">4人旅！踊り子号＆レンタカーで満喫プラン 🚗💨</p>
         </header>
 
         <nav class="flex justify-center mb-8 bg-white p-2 rounded-lg shadow-sm">
-            <button onclick="showSection('travel-plan')" class="nav-tab tab-active flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="travel-plan">旅のプラン</button>
-            <button onclick="showSection('costs')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="costs">費用</button>
-            <button onclick="showSection('links-collection')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="links-collection">リンク集</button>
-            <button onclick="showSection('overview')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="overview">概要</button>
+            <button onclick="showSection('travel-plan')" class="nav-tab tab-active flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="travel-plan">旅のプラン 🗺️</button>
+            <button onclick="showSection('costs')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="costs">費用 💰</button>
+            <button onclick="showSection('links-collection')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="links-collection">リンク集 🔗</button>
+            <button onclick="showSection('lunch-candidates')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="lunch-candidates">ランチ候補 😋</button>
+            <button onclick="showSection('overview')" class="nav-tab tab-inactive flex-1 py-2 px-4 rounded-md font-bold transition-colors duration-300" data-section="overview">概要 📝</button>
         </nav>
 
         <main>
             <section id="travel-plan" class="content-section">
                 <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅のプラン</h2>
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅のプラン 🗓️</h2>
                     <div class="flex border border-gray-300 rounded-lg mb-6">
-                        <button id="day1-tab" onclick="showDay('day1')" class="day-tab tab-active flex-1 p-3 font-bold rounded-l-md">1日目</button>
-                        <button id="day2-tab" onclick="showDay('day2')" class="day-tab tab-inactive flex-1 p-3 font-bold rounded-r-md border-l border-gray-300">2日目</button>
+                        <button id="day1-tab" onclick="showDay('day1')" class="day-tab tab-active flex-1 p-3 font-bold rounded-l-md">1日目 ☀️</button>
+                        <button id="day2-tab" onclick="showDay('day2')" class="day-tab tab-inactive flex-1 p-3 font-bold rounded-r-md border-l border-gray-300">2日目 🚶‍♀️</button>
                     </div>
 
                     <div id="day1-content" class="day-content">
@@ -115,37 +126,37 @@
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">12:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">新宿駅出発 (踊り子号) 🚆</h3>
-                                <p class="text-gray-600">約90分移動。車窓からの景色も楽しもう！</p>
+                                <p class="text-gray-600">約90分移動。車窓からの景色も楽しもう！🏞️</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">13:30</p>
-                                <h3 class="text-lg font-bold text-gray-900">熱海駅到着 → 観光準備</h3>
+                                <h3 class="text-lg font-bold text-gray-900">熱海駅到着 → 観光準備 🎒</h3>
                                 <p class="text-gray-600">駅ロッカーに荷物預け、身軽になって観光へ！</p>
                             </div>
                              <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">13:45</p>
                                 <h3 class="text-lg font-bold text-gray-900">ロープウェイで山頂へ 🚠</h3>
-                                <p class="text-gray-600">往復900円/人。絶景を楽しもう！</p>
+                                <p class="text-gray-600">往復900円/人。絶景を楽しもう！🤩</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">14:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">熱海秘宝館 (メイン観光) ✨</h3>
-                                <p class="text-gray-600">約45分。入館料1,900円/人。ロープウェイ山頂駅すぐ。</p>
+                                <p class="text-gray-600">約45分。入館料1,900円/人。ロープウェイ山頂駅すぐ。🤫</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">14:45</p>
                                 <h3 class="text-lg font-bold text-gray-900">熱海城 or トリックアート迷宮館 🏰</h3>
-                                <p class="text-gray-600">約45分。当日の気分で選択。</p>
+                                <p class="text-gray-600">約45分。当日の気分で選択！🎨</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">15:30</p>
                                 <h3 class="text-lg font-bold text-gray-900">昼食 (熱海銀座商店街) 🍜</h3>
-                                <p class="text-gray-600">約60分。散策＆ランチ。食べ歩きも楽しんでね！</p>
+                                <p class="text-gray-600">約60分。散策＆ランチ。食べ歩きも楽しんでね！😋</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
@@ -157,19 +168,19 @@
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">17:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">食材買い出し 🛒</h3>
-                                <p class="text-gray-600">道の駅伊東マリンタウンで新鮮魚介、マックスバリュでその他を調達。</p>
+                                <p class="text-gray-600">道の駅伊東マリンタウンで新鮮魚介、マックスバリュでその他を調達。🐟🥦</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">18:00</p>
                                 <h3 class="text-lg font-bold text-gray-900">宿 (あじろハウス) へ移動・チェックイン 🏨</h3>
-                                <p class="text-gray-600">チェックイン15:00から。BBQ準備・ゆっくりタイム。</p>
+                                <p class="text-gray-600">チェックイン15:00から。BBQ準備・ゆっくりタイム。😌</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">18:30~</p>
-                                <h3 class="text-lg font-bold text-gray-900">BBQ開始 🔥</h3>
-                                <p class="text-gray-600">利用時間9:00〜21:00。電気グリルのみ。利用料1,500円/組。</p>
+                                <h3 class="text-lg font-bold text-gray-900">BBQ開始 🔥🥩</h3>
+                                <p class="text-gray-600">利用時間9:00〜21:00。電気グリルのみ。利用料1,500円/組。乾杯！🍻</p>
                             </div>
                         </div>
                     </div>
@@ -178,65 +189,65 @@
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">9:00</p>
-                                <h3 class="text-lg font-bold text-gray-900">朝食・チェックアウト準備 ☕</h3>
+                                <h3 class="text-lg font-bold text-gray-900">朝食・チェックアウト準備 ☕🧺</h3>
                                 <p class="text-gray-600">ゴミ処理なども忘れずにね。チェックアウト10:00。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">10:30</p>
-                                <h3 class="text-lg font-bold text-gray-900">レンタカーで来宮神社へ 🚗</h3>
+                                <h3 class="text-lg font-bold text-gray-900">レンタカーで来宮神社へ 🚗⛩️</h3>
                                 <p class="text-gray-600">約20分。駐車場を利用。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">11:00</p>
-                                <h3 class="text-lg font-bold text-gray-900">来宮神社を参拝＆散策 🌳</h3>
+                                <h3 class="text-lg font-bold text-gray-900">来宮神社を参拝＆散策 🌳🙏</h3>
                                 <p class="text-gray-600">大楠のパワーを感じよう！拝観料無料。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">12:15</p>
-                                <h3 class="text-lg font-bold text-gray-900">給油＆レンタカー返却</h3>
+                                <h3 class="text-lg font-bold text-gray-900">給油＆レンタカー返却 ⛽🔑</h3>
                                 <p class="text-gray-600">熱海駅近くのENEOSなどで給油後、返却。</p>
                             </div>
                              <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">12:45</p>
-                                <h3 class="text-lg font-bold text-gray-900">荷物をロッカーへ</h3>
+                                <h3 class="text-lg font-bold text-gray-900">荷物をロッカーへ 🗄️</h3>
                                 <p class="text-gray-600">身軽になって行動開始！</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">13:30</p>
-                                <h3 class="text-lg font-bold text-gray-900">昼食 (熱海サンビーチ近辺) 🍽️</h3>
-                                <p class="text-gray-600">海が見えるカフェやレストランでランチと一緒にお酒も！</p>
+                                <h3 class="text-lg font-bold text-gray-900">昼食 (熱海サンビーチ近辺) 🍽️🏖️</h3>
+                                <p class="text-gray-600">海が見えるカフェやレストランでランチと一緒にお酒も！🥂</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">15:00</p>
-                                <h3 class="text-lg font-bold text-gray-900">熱海駅へ移動</h3>
+                                <h3 class="text-lg font-bold text-gray-900">熱海駅へ移動 🚶‍♀️</h3>
                                 <p class="text-gray-600">徒歩約10分。</p>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <p class="font-bold text-gray-500">15:30 or 16:00</p>
-                                <h3 class="text-lg font-bold text-gray-900">熱海駅発 → 新宿駅へ 🚆</h3>
-                                <p class="text-gray-600">踊り子号で帰路へ。お疲れ様でした！</p>
+                                <h3 class="text-lg font-bold text-gray-900">熱海駅発 → 新宿駅へ 🚆✨</h3>
+                                <p class="text-gray-600">踊り子号で帰路へ。お疲れ様でした！👋</p>
                             </div>
                         </div>
                     </div>
                     <div class="mt-8 pt-6 border-t border-gray-300">
-                        <h3 class="text-xl font-bold mb-4 text-gray-900">踊り子号 時刻表（目安）</h3>
-                        <p class="text-gray-600 mb-2">※最新の情報はJR東日本の公式サイトで必ずご確認ください。</p>
+                        <h3 class="text-xl font-bold mb-4 text-gray-900">踊り子号 時刻表（目安） ⏰</h3>
+                        <p class="text-gray-600 mb-2">※最新の情報はJR東日本の公式サイトで必ずご確認ください。👉 <a href="https://www.jreast.co.jp/saphir/en/cars/station/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">JR東日本公式サイト</a></p>
                         <div class="mb-4">
-                            <h4 class="font-bold text-lg text-gray-800">往路：8月24日(日) 新宿 → 熱海</h4>
+                            <h4 class="font-bold text-lg text-gray-800">往路：8月24日(日) 新宿 → 熱海 ➡️</h4>
                             <ul class="list-disc list-inside text-gray-700 ml-4">
                                 <li>**踊り子9号**: 新宿 12:00発 → 熱海 13:20着</li>
                                 <li>サフィール踊り子5号: 新宿 12:25発 → 熱海 13:51着 (プレミアムグリーン車のみ)</li>
                             </ul>
                         </div>
                         <div>
-                            <h4 class="font-bold text-lg text-gray-800">復路：8月25日(月) 熱海 → 新宿方面</h4>
+                            <h4 class="font-bold text-lg text-gray-800">復路：8月25日(月) 熱海 → 新宿方面 ⬅️</h4>
                             <ul class="list-disc list-inside text-gray-700 ml-4">
                                 <li>サフィール踊り子2号: 熱海 15:30発 → 東京 16:49着 (プレミアムグリーン車のみ)</li>
                                 <li>サフィール踊り子4号: 熱海 17:57発 → 東京 19:20着 (プレミアムグリーン車のみ)</li>
@@ -249,30 +260,30 @@
 
             <section id="costs" class="content-section hidden">
                 <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">1人あたりの費用目安</h2>
-                    <p class="text-center text-gray-600 mb-6">主要な費用の内訳です。グラフをタップまたはホバーすると詳細が表示されます。</p>
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">1人あたりの費用目安 💰</h2>
+                    <p class="text-center text-gray-600 mb-6">主要な費用の内訳です。グラフをタップまたはホバーすると詳細が表示されます。📈</p>
                     <div class="chart-container mb-8">
                         <canvas id="costsChart"></canvas>
                     </div>
                     <div class="space-y-4">
                         <div class="p-4 border rounded-lg">
-                            <h3 class="font-bold text-lg">交通費</h3>
+                            <h3 class="font-bold text-lg">交通費 🚆</h3>
                             <p class="text-gray-600">1人あたりの概算費用: <span class="font-bold text-xl">約8,500円</span> (8,000円〜9,000円)</p>
                         </div>
                         <div class="p-4 border rounded-lg">
-                            <h3 class="font-bold text-lg">宿泊費</h3>
+                            <h3 class="font-bold text-lg">宿泊費 🏡</h3>
                             <p class="text-gray-600">1人あたりの概算費用: <span class="font-bold text-xl">11,575円</span> (宿代+清掃代+BBQ利用料)</p>
                         </div>
                         <div class="p-4 border rounded-lg">
-                            <h3 class="font-bold text-lg">レンタカー代</h3>
+                            <h3 class="font-bold text-lg">レンタカー代 ⛽</h3>
                             <p class="text-gray-600">1人あたりの概算費用: <span class="font-bold text-xl">3,750円</span> (ガソリン代込み、駐車場代含まず)</p>
                         </div>
                         <div class="p-4 border rounded-lg">
-                            <h3 class="font-bold text-lg">BBQ食材費</h3>
+                            <h3 class="font-bold text-lg">BBQ食材費 🍖</h3>
                             <p class="text-gray-600">1人あたりの概算費用: <span class="font-bold text-xl">2,500円</span></p>
                         </div>
                         <div class="p-4 bg-blue-50 border-blue-200 border rounded-lg mt-6">
-                            <h3 class="font-bold text-lg text-blue-800">合計費用 (1人あたり)</h3>
+                            <h3 class="font-bold text-lg text-blue-800">合計費用 (1人あたり) ✨</h3>
                             <p class="text-blue-700"><span class="font-bold text-2xl">約26,325円</span> (25,825円〜26,825円)</p>
                         </div>
                     </div>
@@ -281,8 +292,8 @@
 
             <section id="links-collection" class="content-section hidden">
                 <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">主要リンク集</h2>
-                    <p class="text-gray-600 mb-6">熱海旅行で役立つ各施設の公式サイトや関連情報へのリンクだよ。</p>
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">主要リンク集 🔗</h2>
+                    <p class="text-gray-600 mb-6">熱海旅行で役立つ各施設の公式サイトや関連情報へのリンクだよ。📱</p>
                     <div class="space-y-4">
                         <div class="link-item">
                             <span role="img" aria-label="ropeway">🚠</span>
@@ -332,16 +343,209 @@
                 </div>
             </section>
 
+            <section id="lunch-candidates" class="content-section hidden">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">熱海ランチ候補 🍽️</h2>
+                    <p class="text-gray-600 mb-6">熱海でのランチにおすすめのお店だよ。1日目と2日目で場所が変わるから、注意してね！😉 訪問前に営業時間や定休日を確認してね！</p>
+                    
+                    <div class="flex border border-gray-300 rounded-lg mb-6">
+                        <button id="day1-lunch-tab" onclick="showLunchDay('day1')" class="day-tab tab-active flex-1 p-3 font-bold rounded-l-md">1日目ランチ (銀座商店街) ☀️</button>
+                        <button id="day2-lunch-tab" onclick="showLunchDay('day2')" class="day-tab tab-inactive flex-1 p-3 font-bold rounded-r-md border-l border-gray-300">2日目ランチ (サンビーチ周辺) 🚶‍♀️</button>
+                    </div>
+
+                    <div id="day1-lunch-content" class="lunch-day-content">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">1. 海鮮・定食 🐟🍚</h3>
+                        <div class="space-y-4 mb-8">
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">熱海銀座 おさかな食堂 🐠</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町8-8</p>
+                                <p class="text-gray-700">平均価格: 約2,000円〜3,000円</p>
+                                <a href="https://www.osakana-atami.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">公式サイトを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">和食処 天匠 🍣</h4>
+                                <p class="text-gray-700">住所: 熱海市清水町4-16</p>
+                                <p class="text-gray-700">平均価格: 約2,000円〜3,000円</p>
+                                <a href="https://www.instagram.com/tenshou_10/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">Instagramを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">海幸楽膳 釜つる 🦐</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-11</p>
+                                <p class="text-gray-700">平均価格: 約2,000円〜4,000円</p>
+                                <a href="https://kama-tsuru.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">公式サイトを見る</a>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">2. 洋食 🍝🍔</h3>
+                        <div class="space-y-4 mb-8">
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">宝亭 🍛</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-2</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000550/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">Cafe&Restaurant Nagisa ☕</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市渚町10-1</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22026362/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">レストラン スコット本店 🥩</h4>
+                                <p class="text-gray-700">住所: 熱海市渚町10-13</p>
+                                <p class="text-gray-700">平均価格: 約3,000円〜5,000円</p>
+                                <a href="https://www.restaurant-scott.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">公式サイトを見る</a>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">3. 和食 🥢🌸</h3>
+                        <div class="space-y-4 mb-8">
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">うまい鮨勘 熱海支店 🍣</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-11</p>
+                                <p class="text-gray-700">平均価格: 約2,000円〜4,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22036725/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">囲炉茶屋 離れ家 翠々 🔥</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町7-1</p>
+                                <p class="text-gray-700">平均価格: 約3,000円〜5,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22034988/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">食事処 ふくや 🍲</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町4-3</p>
+                                <p class="text-gray-700">平均価格: 約3,000円〜5,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000557/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">4. そば 🍜🥢</h3>
+                        <div class="space-y-4">
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">熱海 そば処 利久庵 🥢</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-21</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://nbwb100.gorp.jp/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">ぐるなびを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">成木屋本店 🍜</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-14</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000547/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">手打ちそば 泉八 🌿</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-18</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000548/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="day2-lunch-content" class="lunch-day-content hidden">
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">1. 海鮮・定食 (熱海サンビーチ周辺) 🐠🐟</h3>
+                        <div class="space-y-4 mb-8">
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">海鮮食楽市場 🐟</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-14</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000551/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">熱海おさかな・大食堂 🍣</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
+                                <p class="text-gray-700">平均価格: 約2,000円〜3,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22037130/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">おさしみ食べ放題 熱海おさかなパラダイス 🦐</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
+                                <p class="text-gray-700">平均価格: 約3,000円〜4,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22036724/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">2. 洋食 (熱海サンビーチ周辺) 🍝🍔</h3>
+                        <div class="space-y-4 mb-8">
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">Cafe&Restaurant Nagisa ☕</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市渚町10-1</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22026362/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">レストラン スコット本店 🥩</h4>
+                                <p class="text-gray-700">住所: 熱海市渚町10-13</p>
+                                <p class="text-gray-700">平均価格: 約3,000円〜5,000円</p>
+                                <a href="https://www.restaurant-scott.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">公式サイトを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">レストラン フルヤ 🍳</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-10</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000554/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">3. 和食 (熱海サンビーチ周辺) 🥢🌸</h3>
+                        <div class="space-y-4 mb-8">
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">創作和食Ren 🍶</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市田原本町7-6</p>
+                                <p class="text-gray-700">平均価格: 約2,000円〜4,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22033621/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">和食処 こばやし 🍚</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000560/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">熱海 祇園 🏮</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市田原本町6-1</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000559/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                        </div>
+
+                        <h3 class="text-xl font-bold mb-4 text-gray-800">4. そば (熱海サンビーチ周辺) 🍜🥢</h3>
+                        <div class="space-y-4">
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">だるま 🥢</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220505/22000556/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">そば処 木むら 🌿</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000561/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                            <div class="restaurant-item">
+                                <h4 class="font-bold text-lg text-gray-900">更科 🍜</h4>
+                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
+                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
+                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000563/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">食べログを見る</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <section id="overview" class="content-section hidden">
                 <div class="bg-white p-6 rounded-lg shadow">
-                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅の概要</h2>
-                    <p class="text-gray-600 text-center py-8">このページは別途Notionで作成されます。</p>
+                    <h2 class="text-2xl font-bold mb-4 border-b pb-2 text-gray-900">旅の概要 📝</h2>
+                    <p class="text-gray-600 text-center py-8">このページは別途Notionで作成されます。✨</p>
                 </div>
             </section>
         </main>
     </div>
 
     <script>
+        // セクション表示切り替え関数
         function showSection(sectionId) {
             document.querySelectorAll('.content-section').forEach(section => {
                 section.classList.add('hidden');
@@ -357,13 +561,14 @@
             activeTab.classList.remove('tab-inactive');
         }
 
+        // 旅のプランの日付切り替え関数
         function showDay(dayId) {
-            document.querySelectorAll('.day-content').forEach(content => {
+            document.querySelectorAll('#travel-plan .day-content').forEach(content => {
                 content.classList.add('hidden');
             });
             document.getElementById(`${dayId}-content`).classList.remove('hidden');
 
-            document.querySelectorAll('.day-tab').forEach(tab => {
+            document.querySelectorAll('#travel-plan .day-tab').forEach(tab => {
                 tab.classList.remove('tab-active');
                 tab.classList.add('tab-inactive');
             });
@@ -372,6 +577,23 @@
             activeTab.classList.remove('tab-inactive');
         }
 
+        // ランチ候補の日付切り替え関数
+        function showLunchDay(dayId) {
+            document.querySelectorAll('#lunch-candidates .lunch-day-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(`${dayId}-lunch-content`).classList.remove('hidden');
+
+            document.querySelectorAll('#lunch-candidates .day-tab').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('tab-inactive');
+            });
+            const activeTab = document.getElementById(`${dayId}-lunch-tab`);
+            activeTab.classList.add('tab-active');
+            activeTab.classList.remove('tab-inactive');
+        }
+
+        // チャート描画
         const ctx = document.getElementById('costsChart').getContext('2d');
         const costsChart = new Chart(ctx, {
             type: 'doughnut',
