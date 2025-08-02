@@ -3,671 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>熱海1泊2日旅行プランナー</title>
+    <title>週刊なつやすみ - 2025.8.24 熱海旅行</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.jsライブラリを追加 -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Sky & Sand (Background: #FFFAF0, Accent Blue: #3E6188, Accent Sand: #D2B48C, Cards: #FFFFFF) -->
-    <!-- Application Structure Plan: A single-page dashboard with tab-based navigation to maximize usability within a confined space like a Notion embed. The primary navigation allows users to switch between major sections (Plan, Costs, Links, Lunch). Each section is designed with a clear visual hierarchy and an uncluttered aesthetic. This tabbed structure prevents information overload and enables users to quickly find and focus on specific content without excessive scrolling. -->
-    <!-- Visualization & Content Choices: Plan -> Goal: Organize -> Viz: Vertical Timeline (HTML/CSS) -> Interaction: Day 1/2 Buttons -> Justification: The timeline clearly presents the sequential flow, and buttons allow for quick day switching. Costs -> Goal: Compare/Proportions -> Viz: Donut Chart (Chart.js/Canvas) -> Interaction: Hover Tooltips -> Justification: Provides an immediate visual breakdown of per-person costs. Lunch Candidates -> Goal: Inform/Choose -> Viz: Categorized Lists (HTML) -> Interaction: Day 1/2 Tabs -> Justification: Organizes a large set of dining options and makes it easy to compare between days. CONFIRMATION: NO SVG/Mermaid used. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=M+PLUS+1p:wght@400;700;900&family=RocknRoll+One&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --color-bg: #f4f1ea;
+            --color-text: #333333;
+            --color-accent-red: #B94040;
+            --color-accent-blue: #3A6A7E;
+            --color-accent-yellow: #D8A35D;
+        }
         body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: #FFFAF0; /* Floral White for a sandy feel */
+            font-family: 'M PLUS 1p', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text);
         }
-        .text-accent {
-            color: #3E6188; /* Dark Blue for a sophisticated feel */
+        .font-magazine-title {
+            font-family: 'RocknRoll One', sans-serif;
         }
-        .border-accent {
-            border-color: #3E6188;
+        .font-handwriting {
+            font-family: 'Klee One', cursive;
         }
-        .bg-accent-light {
-            background-color: #D2B48C; /* Tan for a warm accent */
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            white-space: nowrap;
         }
-        .tab-active {
-            background-color: #3E6188;
-            color: white;
-            border-color: #3E6188;
+        .film-filter {
+            filter: sepia(30%) contrast(105%) brightness(105%) saturate(120%) hue-rotate(-10deg);
+            transition: all 0.3s ease;
         }
-        .tab-inactive {
+        .film-filter:hover { filter: none; }
+
+        .tab {
+            transition: all 0.2s ease-in-out;
+            border: 2px solid var(--color-text);
+            border-bottom: none;
+            background-color: #e9e5dc;
+        }
+        .tab.active {
             background-color: white;
-            color: #3E6188;
-            border-color: #D2B48C;
+            color: var(--color-accent-red);
+            transform: translateY(2px);
+            border-color: var(--color-accent-red);
         }
-        .timeline-item {
-            position: relative;
-            padding-left: 100px;
-            margin-bottom: 2rem;
+        .tab-content {
+            border: 2px solid var(--color-accent-red);
+            background-color: white;
         }
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 59px;
-            top: 25px;
-            bottom: -25px;
-            width: 2px;
-            background-color: #D2B48C;
-            z-index: 5;
+
+        .marker {
+            background: linear-gradient(transparent 60%, var(--color-accent-yellow) 60%);
+            padding: 0 0.25rem;
         }
-        .timeline-item:last-child::before {
-            display: none;
-        }
-        .timeline-dot {
-            position: absolute;
-            left: 50px;
-            top: 16px;
-            height: 20px;
-            width: 20px;
-            background-color: #FFFFFF;
-            border: 4px solid #3E6188;
-            border-radius: 50%;
-            z-index: 10;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 250px;
-            max-height: 70vw;
-        }
-        .link-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-        .link-item span {
-            margin-right: 0.5rem;
-            font-size: 1.25rem;
-        }
-        .link-item a {
-            color: #3E6188;
-            text-decoration: none;
+        .cta-link {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            background-color: #fffacd;
+            border: 1px dashed var(--color-accent-yellow);
+            border-radius: 4px;
+            color: var(--color-accent-red);
             font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .link-item a:hover {
+        .cta-link:hover {
+            transform: rotate(-2deg);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+        .gourmet-card {
+            border-left: 4px solid var(--color-accent-yellow);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .gourmet-card a {
+            color: var(--color-accent-blue);
+            font-weight: bold;
             text-decoration: underline;
         }
-        .restaurant-item {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid #E5E7EB;
+        .gourmet-card a:hover {
+            color: var(--color-accent-red);
         }
-        .restaurant-item:last-child {
+        .checklist-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #ccc;
+        }
+        .checklist-item:last-child {
             border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
         }
-        h1, h2, h3, h4 {
-            color: #3E6188;
+        .link-item a {
+            color: var(--color-text);
+            transition: color 0.2s;
+        }
+        .link-item a:hover {
+            color: var(--color-accent-red);
         }
     </style>
 </head>
-<body class="antialiased text-gray-800">
+<body class="antialiased">
 
-    <div class="container mx-auto p-4 md:p-8 max-w-3xl">
+    <div class="container mx-auto max-w-3xl p-4 md:p-6">
         
-        <header class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl font-bold mb-2">最高のBBQが待つ、熱海での冒険</h1>
-            <p class="text-gray-600">ログハウスを拠点に、熱海の魅力を遊び尽くそう！</p>
+        <header class="text-center mb-4">
+            <h1 class="font-magazine-title text-4xl md:text-5xl font-black" style="color: var(--color-accent-red);">週刊なつやすみ</h1>
+            <p class="text-sm text-gray-500 mt-1">WEEKLY SUMMER VACATION | 2025年8月24日号</p>
         </header>
 
-        <nav class="flex justify-center mb-8 bg-white p-2 rounded-lg shadow-sm border border-accent">
-            <button onclick="showSection('travel-plan')" class="nav-tab flex-1 py-3 px-4 font-bold rounded-l-lg transition-colors duration-300 tab-active" data-section="travel-plan">旅のプラン 🗺️</button>
-            <button onclick="showSection('costs')" class="nav-tab flex-1 py-3 px-4 font-bold transition-colors duration-300 tab-inactive border-l border-accent" data-section="costs">費用 💰</button>
-            <button onclick="showSection('links-collection')" class="nav-tab flex-1 py-3 px-4 font-bold transition-colors duration-300 tab-inactive border-l border-accent" data-section="links-collection">リンク集 🔗</button>
-            <button onclick="showSection('lunch-candidates')" class="nav-tab flex-1 py-3 px-4 font-bold rounded-r-lg transition-colors duration-300 tab-inactive border-l border-accent" data-section="lunch-candidates">ランチ候補 😋</button>
-        </nav>
-
-        <main>
-            <section id="travel-plan" class="content-section">
-                <div class="bg-white p-8 rounded-xl shadow-lg border border-accent">
-                    <h2 class="text-3xl font-bold mb-6">旅のプラン</h2>
-                    <div class="mb-8">
-                        <p class="text-gray-600">最高の旅にするための、ワクワクが詰まったスケジュール。😎</p>
-                    </div>
-                    <div class="flex border border-accent rounded-lg mb-10">
-                        <button id="day1-tab" onclick="showDay('day1')" class="day-tab flex-1 py-3 px-4 font-bold rounded-l-lg transition-colors duration-300 tab-active">1日目 ☀️</button>
-                        <button id="day2-tab" onclick="showDay('day2')" class="day-tab flex-1 py-3 px-4 font-bold rounded-r-lg transition-colors duration-300 tab-inactive border-l border-accent">2日目 🚶‍♀️</button>
-                    </div>
-
-                    <div id="day1-content" class="day-content">
-                        <div class="relative pl-12">
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">12:00</p>
-                                <h3 class="text-lg font-bold">新宿駅出発 (踊り子号) 🚆</h3>
-                                <p class="text-gray-600 text-sm mt-1">旅の始まりは、踊り子号で。車窓からの景色も最高のごちそう！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">13:30</p>
-                                <h3 class="text-lg font-bold">熱海駅到着 → 観光準備 🎒</h3>
-                                <p class="text-gray-600 text-sm mt-1">身軽になって、いざ熱海探検へ！</p>
-                            </div>
-                             <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">13:45</p>
-                                <h3 class="text-lg font-bold">ロープウェイで山頂へ 🚠</h3>
-                                <p class="text-gray-600 text-sm mt-1">熱海を一望できる絶景ポイントへ、空中散歩！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">14:00</p>
-                                <h3 class="text-lg font-bold">熱海秘宝館 (メイン観光) ✨</h3>
-                                <p class="text-gray-600 text-sm mt-1">レトロな世界観で、忘れられない思い出を作ろう。</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">14:45</p>
-                                <h3 class="text-lg font-bold">熱海城 or トリックアート迷宮館 🏰</h3>
-                                <p class="text-gray-600 text-sm mt-1">お城で絶景か、不思議な写真かで気分を上げよう！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">15:30</p>
-                                <h3 class="text-lg font-bold">昼食 (熱海銀座商店街) 🍜</h3>
-                                <p class="text-gray-600 text-sm mt-1">老舗と新店が混在する商店街で、グルメ巡り！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">16:45</p>
-                                <h3 class="text-lg font-bold">レンタカーを借りる 🚗</h3>
-                                <p class="text-gray-600 text-sm mt-1">ここからはレンタカーで、自由な旅へ出発！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">17:00</p>
-                                <h3 class="text-lg font-bold">食材買い出し 🛒</h3>
-                                <p class="text-gray-600 text-sm mt-1">夜のBBQのために、地元の新鮮食材を買い出し！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">18:00</p>
-                                <h3 class="text-lg font-bold">宿 (あじろハウス) へ移動・チェックイン 🏨</h3>
-                                <p class="text-gray-600 text-sm mt-1">旅の拠点に到着。BBQの準備、始めよう！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">18:30~</p>
-                                <h3 class="text-lg font-bold">BBQ開始 🔥🥩</h3>
-                                <p class="text-gray-600 text-sm mt-1">美味しい料理と最高の仲間で、乾杯！</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="day2-content" class="day-content hidden">
-                        <div class="relative pl-12">
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">9:00</p>
-                                <h3 class="text-lg font-bold">朝食・チェックアウト準備 ☕</h3>
-                                <p class="text-gray-600 text-sm mt-1">旅の朝は、ゆっくりと。出発に向けて準備を始めよう。</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">10:30</p>
-                                <h3 class="text-lg font-bold">レンタカーで来宮神社へ 🚗⛩️</h3>
-                                <p class="text-gray-600 text-sm mt-1">樹齢2000年の大楠に会いに行こう！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">11:00</p>
-                                <h3 class="text-lg font-bold">来宮神社を参拝＆散策 🌳🙏</h3>
-                                <p class="text-gray-600 text-sm mt-1">パワースポットで、心と体をリフレッシュ！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">12:15</p>
-                                <h3 class="text-lg font-bold">給油＆レンタカー返却 ⛽🔑</h3>
-                                <p class="text-gray-600 text-sm mt-1">レンタカーを返して、歩いて巡る熱海へ。</p>
-                            </div>
-                             <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">12:45</p>
-                                <h3 class="text-lg font-bold">荷物をロッカーへ 🗄️</h3>
-                                <p class="text-gray-600 text-sm mt-1">身軽になって、最後の熱海を楽しもう！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">13:30</p>
-                                <h3 class="text-lg font-bold">昼食 (熱海サンビーチ近辺) 🍽️🏖️</h3>
-                                <p class="text-gray-600 text-sm mt-1">海を見ながら、ランチとお酒で最高の締めくくり！</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">15:00</p>
-                                <h3 class="text-lg font-bold">熱海駅へ移動 🚶‍♀️</h3>
-                                <p class="text-gray-600 text-sm mt-1">お土産を買いに、熱海駅へ。</p>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-dot"></div>
-                                <p class="font-bold text-gray-500 mb-1">15:30 or 16:00</p>
-                                <h3 class="text-lg font-bold">熱海駅発 → 新宿駅へ 🚆✨</h3>
-                                <p class="text-gray-600 text-sm mt-1">楽しかった旅の思い出を胸に、帰路へ。</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-8 pt-6 border-t border-accent">
-                        <h3 class="text-xl font-bold mb-4">踊り子号 時刻表（目安）</h3>
-                        <p class="text-gray-600 mb-2">※最新の情報はJR東日本の公式サイトで必ずご確認ください。</p>
-                        <div class="mb-4">
-                            <h4 class="font-bold text-lg">往路：8月24日(日) 新宿 → 熱海</h4>
-                            <ul class="list-disc list-inside text-gray-700 ml-4">
-                                <li>**踊り子9号**: 新宿 12:00発 → 熱海 13:20着</li>
-                                <li>サフィール踊り子5号: 新宿 12:25発 → 熱海 13:51着 (プレミアムグリーン車のみ)</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg">復路：8月25日(月) 熱海 → 新宿方面</h4>
-                            <ul class="list-disc list-inside text-gray-700 ml-4">
-                                <li>サフィール踊り子2号: 熱海 15:30発 → 東京 16:49着 (プレミアムグリーン車のみ)</li>
-                                <li>サフィール踊り子4号: 熱海 17:57発 → 東京 19:20着 (プレミアムグリーン車のみ)</li>
-                                <li>※新宿駅直通の踊り子号は、曜日や時期により運行が異なります。東京駅乗り換えで新宿へ向かうことも可能です。</li>
-                            </ul>
-                        </div>
+        <!-- 表紙 -->
+        <main class="bg-white p-2 md:p-4 border-4 border-black shadow-lg mb-12">
+            <div class="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-2 md:gap-4 items-start">
+                <div class="hidden md:flex flex-col items-center justify-start pt-8 space-y-4">
+                    <div class="vertical-text font-bold text-2xl tracking-widest"><p>忘れたくない夏が、ここにある。</p></div>
+                    <div class="border-l-2 h-24" style="border-color: var(--color-accent-red);"></div>
+                </div>
+                <div class="relative w-full h-[70vh] overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1507525428034-b723a996f6ea?q=80&w=2070&auto=format&fit=crop" alt="夏の熱海の海" class="absolute inset-0 w-full h-full object-cover film-filter" onerror="this.onerror=null;this.src='https://placehold.co/1200x800/3A6A7E/ffffff?text=Umi';">
+                    <div class="absolute bottom-0 left-0 w-full p-4 md:p-6 bg-gradient-to-t from-black/80 to-transparent text-white">
+                        <h2 class="text-3xl lg:text-4xl font-black leading-tight">総力特集：<br>最高のBBQを求めて。</h2>
+                        <p class="mt-2 text-sm">伊東マリンタウンの海の幸、徹底解剖！</p>
                     </div>
                 </div>
-            </section>
-
-            <section id="costs" class="content-section hidden">
-                <div class="bg-white p-8 rounded-xl shadow-lg border border-accent">
-                    <h2 class="text-3xl font-bold mb-6">費用まとめ</h2>
-                    <div class="md:flex md:space-x-8">
-                        <div class="md:w-1/2 flex flex-col justify-center mb-8 md:mb-0">
-                            <div class="chart-container">
-                                <canvas id="costsChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="md:w-1/2 space-y-4">
-                            <div class="p-4 border rounded-lg bg-gray-50">
-                                <h3 class="font-bold text-lg">交通費 (1人)</h3>
-                                <p class="text-gray-600"><span class="font-bold text-xl">約8,500円</span> (8,000円〜9,000円)</p>
-                            </div>
-                            <div class="p-4 border rounded-lg bg-gray-50">
-                                <h3 class="font-bold text-lg">宿泊費 (1人)</h3>
-                                <p class="text-gray-600"><span class="font-bold text-xl">11,575円</span></p>
-                            </div>
-                            <div class="p-4 border rounded-lg bg-gray-50">
-                                <h3 class="font-bold text-lg">レンタカー代 (1人)</h3>
-                                <p class="text-gray-600"><span class="font-bold text-xl">3,750円</span></p>
-                            </div>
-                            <div class="p-4 border rounded-lg bg-gray-50">
-                                <h3 class="font-bold text-lg">BBQ食材費 (1人)</h3>
-                                <p class="text-gray-600"><span class="font-bold text-xl">2,500円</span></p>
-                            </div>
-                            <div class="p-4 bg-accent-light border-accent rounded-lg mt-6 text-accent">
-                                <h3 class="font-bold text-lg">合計費用 (1人あたり)</h3>
-                                <p class="font-bold text-2xl">約26,325円</p>
-                                <p class="text-gray-700 text-sm">(25,825円〜26,825円)</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="hidden md:flex flex-col items-center justify-start pt-8">
+                    <p class="vertical-text font-semibold text-sm tracking-wider">仲間と過ごす48時間、<br>熱海ドキュメント。</p>
                 </div>
-            </section>
-
-            <section id="links-collection" class="content-section hidden">
-                <div class="bg-white p-8 rounded-xl shadow-lg border border-accent">
-                    <h2 class="text-3xl font-bold mb-6">主要リンク集</h2>
-                    <p class="text-gray-600 mb-6">熱海旅行で役立つ各施設の公式サイトや関連情報へのリンクです。</p>
-                    <div class="space-y-4">
-                        <div class="link-item">
-                            <span role="img" aria-label="ropeway">🚠</span>
-                            <a href="https://www.atami-ropeway.jp/" target="_blank" rel="noopener noreferrer">熱海ロープウェイ</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="museum">✨</span>
-                            <a href="https://www.atami-ropeway.jp/atami-hihoukan/" target="_blank" rel="noopener noreferrer">熱海秘宝館</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="castle">🏰</span>
-                            <a href="https://atamijyo.com/" target="_blank" rel="noopener noreferrer">熱海城</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="trick art">🖼️</span>
-                            <a href="https://www.atami-trickart.com/" target="_blank" rel="noopener noreferrer">熱海トリックアート迷宮館</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="fish market">🐟</span>
-                            <a href="https://ito-marinetown.co.jp/" target="_blank" rel="noopener noreferrer">道の駅伊東マリンタウン</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="supermarket">🛒</span>
-                            <a href="https://www.mv-tokai.co.jp/store/14341/" target="_blank" rel="noopener noreferrer">マックスバリュ熱海店</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="house">🏡</span>
-                            <a href="https://izuminpaku-yoyaku.com/atami/ajirohouse/" target="_blank" rel="noopener noreferrer">あじろハウス</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="shrine">⛩️</span>
-                            <a href="https://kinomiya.or.jp/" target="_blank" rel="noopener noreferrer">来宮神社</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="gas station">⛽</span>
-                            <a href="https://www.eneos.co.jp/ss/search/ss_detail.php?sscode=304191" target="_blank" rel="noopener noreferrer">ENEOS GS熱海SS (給油)</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="locker">🗄️</span>
-                            <a href="https://www.ataminews.gr.jp/useful/coinlocker/" target="_blank" rel="noopener noreferrer">熱海駅ロッカー情報</a>
-                        </div>
-                        <div class="link-item">
-                            <span role="img" aria-label="beach">🏖️</span>
-                            <a href="https://www.ataminews.gr.jp/spot/123/" target="_blank" rel="noopener noreferrer">熱海サンビーチ</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="lunch-candidates" class="content-section hidden">
-                <div class="bg-white p-8 rounded-xl shadow-lg border border-accent">
-                    <h2 class="text-3xl font-bold mb-6">熱海ランチ候補</h2>
-                    <p class="text-gray-600 mb-6">熱海でのランチにおすすめのお店です。訪問前に営業時間や定休日をご確認ください。</p>
-                    
-                    <div class="flex border border-accent rounded-lg mb-10">
-                        <button id="day1-lunch-tab" onclick="showLunchDay('day1')" class="day-tab flex-1 py-3 px-4 font-bold rounded-l-lg transition-colors duration-300 tab-active">1日目ランチ</button>
-                        <button id="day2-lunch-tab" onclick="showLunchDay('day2')" class="day-tab flex-1 py-3 px-4 font-bold rounded-r-lg transition-colors duration-300 tab-inactive border-l border-accent">2日目ランチ</button>
-                    </div>
-
-                    <div id="day1-lunch-content" class="lunch-day-content">
-                        <h3 class="text-xl font-bold mb-4">1. 海鮮・定食</h3>
-                        <div class="space-y-4 mb-8">
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">熱海銀座 おさかな食堂</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町8-8</p>
-                                <p class="text-gray-700">平均価格: 約2,000円〜3,000円</p>
-                                <a href="https://www.osakana-atami.com/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">公式サイトを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">和食処 天匠</h4>
-                                <p class="text-gray-700">住所: 熱海市清水町4-16</p>
-                                <p class="text-gray-700">平均価格: 約2,000円〜3,000円</p>
-                                <a href="https://www.instagram.com/tenshou_10/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">Instagramを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">海幸楽膳 釜つる</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-11</p>
-                                <p class="text-gray-700">平均価格: 約2,000円〜4,000円</p>
-                                <a href="https://kama-tsuru.com/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">公式サイトを見る</a>
-                            </div>
-                        </div>
-
-                        <h3 class="text-xl font-bold mb-4">2. 洋食</h3>
-                        <div class="space-y-4 mb-8">
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">宝亭</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-2</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000550/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">Cafe&Restaurant Nagisa</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市渚町10-1</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22026362/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">レストラン スコット本店</h4>
-                                <p class="text-gray-700">住所: 熱海市渚町10-13</p>
-                                <p class="text-gray-700">平均価格: 約3,000円〜5,000円</p>
-                                <a href="https://www.restaurant-scott.com/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">公式サイトを見る</a>
-                            </div>
-                        </div>
-
-                        <h3 class="text-xl font-bold mb-4">3. 和食</h3>
-                        <div class="space-y-4 mb-8">
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">うまい鮨勘 熱海支店</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-11</p>
-                                <p class="text-gray-700">平均価格: 約2,000円〜4,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22036725/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">囲炉茶屋 離れ家 翠々</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町7-1</p>
-                                <p class="text-gray-700">平均価格: 約3,000円〜5,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22034988/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">食事処 ふくや</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町4-3</p>
-                                <p class="text-gray-700">平均価格: 約3,000円〜5,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000557/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                        </div>
-
-                        <h3 class="text-xl font-bold mb-4">4. そば</h3>
-                        <div class="space-y-4">
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">熱海 そば処 利久庵</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-21</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://nbwb100.gorp.jp/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">ぐるなびを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">成木屋本店</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-14</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000547/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">手打ちそば 泉八</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-18</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000548/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="day2-lunch-content" class="lunch-day-content hidden">
-                        <h3 class="text-xl font-bold mb-4">1. 海鮮・定食 (熱海サンビーチ周辺)</h3>
-                        <div class="space-y-4 mb-8">
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">海鮮食楽市場</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-14</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000551/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">熱海おさかな・大食堂</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
-                                <p class="text-gray-700">平均価格: 約2,000円〜3,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22037130/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">おさしみ食べ放題 熱海おさかなパラダイス</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
-                                <p class="text-gray-700">平均価格: 約3,000円〜4,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22036724/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                        </div>
-
-                        <h3 class="text-xl font-bold mb-4">2. 洋食 (熱海サンビーチ周辺)</h3>
-                        <div class="space-y-4 mb-8">
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">Cafe&Restaurant Nagisa</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市渚町10-1</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22026362/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">レストラン スコット本店</h4>
-                                <p class="text-gray-700">住所: 熱海市渚町10-13</p>
-                                <p class="text-gray-700">平均価格: 約3,000円〜5,000円</p>
-                                <a href="https://www.restaurant-scott.com/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">公式サイトを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">レストラン フルヤ</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市銀座町10-10</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000554/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                        </div>
-
-                        <h3 class="text-xl font-bold mb-4">3. 和食 (熱海サンビーチ周辺)</h3>
-                        <div class="space-y-4 mb-8">
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">創作和食Ren</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市田原本町7-6</p>
-                                <p class="text-gray-700">平均価格: 約2,000円〜4,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22033621/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">和食処 こばやし</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000560/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">熱海 祇園</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市田原本町6-1</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000559/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                        </div>
-
-                        <h3 class="text-xl font-bold mb-4">4. そば (熱海サンビーチ周辺)</h3>
-                        <div class="space-y-4">
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">だるま</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220505/22000556/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">そば処 木むら</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000561/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                            <div class="restaurant-item">
-                                <h4 class="font-bold text-lg">更科</h4>
-                                <p class="text-gray-700">住所: 静岡県熱海市田原本町3-19</p>
-                                <p class="text-gray-700">平均価格: 約1,000円〜2,000円</p>
-                                <a href="https://tabelog.com/shizuoka/A2205/A220502/22000563/" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">食べログを見る</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            </div>
         </main>
+
+        <!-- ▼ここからタブ切り替えセクション▼ -->
+        <div id="contents">
+            <nav class="flex -mb-px overflow-x-auto">
+                <button onclick="showTab('timetable')" class="tab-button tab active font-bold py-2 px-4 rounded-t-lg flex-shrink-0" data-tab="timetable">タイムテーブル</button>
+                <button onclick="showTab('costs')" class="tab-button tab font-bold py-2 px-4 rounded-t-lg flex-shrink-0" data-tab="costs">費用</button>
+                <button onclick="showTab('bbq-guide')" class="tab-button tab font-bold py-2 px-4 rounded-t-lg flex-shrink-0" data-tab="bbq-guide">BBQガイド</button>
+                <button onclick="showTab('gourmet-guide')" class="tab-button tab font-bold py-2 px-4 rounded-t-lg flex-shrink-0" data-tab="gourmet-guide">グルメ情報</button>
+                <button onclick="showTab('packing-list')" class="tab-button tab font-bold py-2 px-4 rounded-t-lg flex-shrink-0" data-tab="packing-list">持ち物リスト</button>
+                <button onclick="showTab('links')" class="tab-button tab font-bold py-2 px-4 rounded-t-lg flex-shrink-0" data-tab="links">リンク集</button>
+            </nav>
+
+            <div class="tab-content p-6 md:p-8 rounded-b-lg rounded-tr-lg">
+                <!-- P.03 - 熱海満喫タイムテーブル -->
+                <section id="timetable" class="content-panel font-handwriting">
+                    <h2 class="font-magazine-title text-3xl mb-8 border-b-4 pb-2" style="border-color: var(--color-accent-red);">P.03 - 熱海満喫タイムテーブル</h2>
+                    <div class="mb-10"><h3 class="font-magazine-title text-2xl mb-4"><span class="marker">1日目：冒険の始まり！</span></h3><div class="space-y-6 border-l-2 border-dashed pl-6" style="border-color: var(--color-accent-yellow);"><div class="flex items-start"><div class="w-24 font-bold text-lg">12:24</div><div class="flex-1"><p class="font-bold">🚆 横浜駅出発！</p><p class="text-sm text-gray-600 pl-4">踊り子号で、いざ熱海へ。駅弁食べながら景色を楽しもう！</p></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">13:20</div><div class="flex-1"><p class="font-bold">🎒 熱海駅到着＆準備</p><p class="text-sm text-gray-600 pl-4">まずは駅のコインロッカーに荷物を預けて身軽に！</p></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">13:45</div><div class="flex-1"><p class="font-bold">🍜 腹ごしらえ！</p><p class="text-sm text-gray-600 pl-4">海鮮丼も干物定食も捨てがたい…。候補リストをチェック！</p><div onclick="showTab('gourmet-guide')" class="cta-link">▶︎ 1日目ランチ候補を見る</div></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">14:45</div><div class="flex-1"><p class="font-bold">🏰 熱海観光タイム！</p><p class="text-sm text-gray-600 pl-4">ロープウェイからの絶景→秘宝館→熱海城orトリックアート！</p></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">16:45</div><div class="flex-1"><p class="font-bold">🚗 レンタカーGET！</p><p class="text-sm text-gray-600 pl-4">ここからは自由な冒険の始まりだ！</p></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">17:15</div><div class="flex-1"><p class="font-bold">🐟 伊東マリンタウン！</p><p class="text-sm text-gray-600 pl-4">サザエ、エビ、地魚…BBQの主役をここで決める！</p><div onclick="showTab('bbq-guide')" class="cta-link">▶︎ 買い出しリストを見る</div></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">18:45~</div><div class="flex-1"><p class="font-bold text-xl" style="color: var(--color-accent-red);">🔥 お待ちかねのBBQ！</p><p class="text-sm text-gray-600 pl-4">音楽かけて、最高のパーティの始まり！食べるぞー！</p></div></div></div></div>
+                    <div><h3 class="font-magazine-title text-2xl mb-4"><span class="marker">2日目：癒やしと、最後の冒険</span></h3><div class="space-y-6 border-l-2 border-dashed pl-6" style="border-color: var(--color-accent-yellow);"><div class="flex items-start"><div class="w-24 font-bold text-lg">10:30</div><div class="flex-1"><p class="font-bold">⛩️ 来宮神社へ。</p><p class="text-sm text-gray-600 pl-4">チェックアウト後、まずはパワースポットへ。樹齢2000年の大楠は圧巻！</p></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">12:15</div><div class="flex-1"><p class="font-bold">⛽ レンタカー返却</p><p class="text-sm text-gray-600 pl-4">給油を忘れずに！ここからは徒歩で散策。</p></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">13:30</div><div class="flex-1"><p class="font-bold">🍽️ 旅の締めくくりランチ。</p><p class="text-sm text-gray-600 pl-4">海を見ながら、ちょっと贅沢なランチもいいかも？</p><div onclick="showTab('gourmet-guide')" class="cta-link">▶︎ 2日目ランチ候補を見る</div></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">15:00</div><div class="flex-1"><p class="font-bold">🚶‍♂️ フリータイム！</p><p class="text-sm text-gray-600 pl-4">ラスカでお土産を探すか、起雲閣でレトロ散歩か。時間と相談！</p><div onclick="showTab('links')" class="cta-link">▶︎ 関連リンクを見る</div></div></div><div class="flex items-start"><div class="w-24 font-bold text-lg">16:30頃</div><div class="flex-1"><p class="font-bold">👋 思い出を胸に、帰路へ。</p><p class="text-sm text-gray-600 pl-4">楽しかった思い出と、たくさんのお土産を忘れずに！</p></div></div></div></div>
+                </section>
+                
+                <!-- 費用 -->
+                <section id="costs" class="content-panel hidden">
+                    <h2 class="font-magazine-title text-3xl mb-8 border-b-4 pb-2" style="border-color: var(--color-accent-red);">旅の費用まとめ</h2>
+                    <div class="md:flex md:items-center md:space-x-8"><div class="md:w-1/2 mb-8 md:mb-0"><div class="relative h-64 w-64 mx-auto"><canvas id="costsChart"></canvas></div></div><div class="md:w-1/2 space-y-3 font-handwriting"><div class="p-3 border rounded-lg bg-gray-50"><h3 class="font-bold text-lg">交通費 (1人)</h3><p class="text-gray-600"><span class="font-bold text-xl">約 5,500円</span></p></div><div class="p-3 border rounded-lg bg-gray-50"><h3 class="font-bold text-lg">宿泊費 (1人)</h3><p class="text-gray-600"><span class="font-bold text-xl">約 9,260円</span></p></div><div class="p-3 border rounded-lg bg-gray-50"><h3 class="font-bold text-lg">レンタカー代 (1人)</h3><p class="text-gray-600"><span class="font-bold text-xl">約 3,000円</span></p></div><div class="p-3 border rounded-lg bg-gray-50"><h3 class="font-bold text-lg">BBQ食材費 (1人)</h3><p class="text-gray-600"><span class="font-bold text-xl">約 2,500円</span></p></div><div class="p-4 rounded-lg mt-4" style="background-color: var(--color-accent-yellow);"><h3 class="font-bold text-lg text-text">合計費用 (1人あたり)</h3><p class="font-bold text-2xl text-accent-red">約 20,260円</p></div></div></div>
+                </section>
+
+                <!-- P.08 - BBQ買い出しガイド -->
+                <section id="bbq-guide" class="content-panel hidden font-handwriting">
+                     <h2 class="font-magazine-title text-3xl mb-8 border-b-4 pb-2" style="border-color: var(--color-accent-red);">P.08 - 巻頭カラー大特集！BBQ買い出しガイド</h2>
+                     <div class="md:grid md:grid-cols-2 md:gap-8 space-y-8 md:space-y-0"><div class="bg-amber-50 p-4 rounded-lg border-2 border-dashed" style="border-color: var(--color-accent-yellow);"><h3 class="font-magazine-title text-xl mb-4 text-center">📍伊東マリンタウンで調達！</h3><p class="text-sm text-center mb-4">旅の主役、海の幸はここで！<br>活気あふれる市場を探検しよう！</p><div class="space-y-3"><div class="checklist-item">🐟 <span class="font-bold">主役の海鮮</span>（お店の人にオススメを聞くのが吉！）</div><div class="checklist-item">🐚 <span class="font-bold">貝類</span>（サザエ、ホタテ、ハマグリ）</div><div class="checklist-item">🦐 <span class="font-bold">エビ</span>（有頭エビが豪華！）</div><div class="checklist-item">🦑 <span class="font-bold">イカ</span>（丸焼きにしたい！）</div><div class="checklist-item">🍺 <span class="font-bold">地ビール</span>（伊東・伊豆高原ビールなど）</div><div class="checklist-item">🌿 <span class="font-bold">生わさび＆柑橘</span>（味変の秘密兵器）</div></div></div><div class="bg-blue-50 p-4 rounded-lg border-2 border-dashed" style="border-color: var(--color-accent-blue);"><h3 class="font-magazine-title text-xl mb-4 text-center">🛒スーパーで調達！</h3><p class="text-sm text-center mb-4">お肉や野菜、飲み物など<br>ベースとなる食材はここで！</p><div class="space-y-3"><div class="checklist-item">🥩 <span class="font-bold">お肉</span>（牛・豚・鶏・ソーセージ）</div><div class="checklist-item">🌽 <span class="font-bold">野菜</span>（玉ねぎ、ピーマン、きのこ類）</div><div class="checklist-item">🍜 <span class="font-bold">〆の一品</span>（焼きそば、焼きおにぎり）</div><div class="checklist-item">🥫 <span class="font-bold">追加調味料</span>（焼肉のタレ、醤油）</div><div class="checklist-item">🧻 <span class="font-bold">消耗品</span>（アルミホイル、ゴミ袋）</div><div class="checklist-item">🥤 <span class="font-bold">ソフトドリンク</span></div></div></div></div>
+                     <div class="mt-6 text-xs text-center text-gray-500"><p>※宿の電気グリルは炭・着火剤不要！塩・砂糖・コショウ・油は宿にあります。</p></div>
+                </section>
+
+                <!-- P.12 - グルメ情報 -->
+                <section id="gourmet-guide" class="content-panel hidden font-handwriting">
+                    <h2 class="font-magazine-title text-3xl mb-8 border-b-4 pb-2" style="border-color: var(--color-accent-red);">P.12 - 熱海グルメ特捜班！</h2>
+                    <div class="mb-12"><h3 class="font-magazine-title text-2xl text-center mb-6"><span class="marker">👑 旅仲間が選ぶ！ランチランキング 👑</span></h3><div class="md:grid md:grid-cols-2 md:gap-8 space-y-8 md:space-y-0"><div><h4 class="font-bold text-lg text-center mb-4">【1日目】熱海銀座 TOP3</h4><div class="ranking-card"><span>🥇</span><h5 class="font-bold inline">熱海銀座 おさかな食堂</h5><p class="text-sm text-gray-700 mt-1">旅の始まりに最高の海鮮丼でテンションMAX！</p></div><div class="ranking-card"><span>🥈</span><h5 class="font-bold inline">囲炉茶屋</h5><p class="text-sm text-gray-700 mt-1">自分で焼く体験が楽しい！グループ旅行に最適。</p></div><div class="ranking-card"><span>🥉</span><h5 class="font-bold inline">食事処 ふくや</h5><p class="text-sm text-gray-700 mt-1">大きなアジフライが名物。地元の味を堪能！</p></div></div><div><h4 class="font-bold text-lg text-center mb-4">【2日目】サンビーチ周辺 TOP3</h4><div class="ranking-card"><span>🥇</span><h5 class="font-bold inline">Cafe&Restaurant Nagisa</h5><p class="text-sm text-gray-700 mt-1">海辺の純喫茶でエモい旅の締めくくりを。</p></div><div class="ranking-card"><span>🥈</span><h5 class="font-bold inline">和食処 こばやし</h5><p class="text-sm text-gray-700 mt-1">宝石箱みたいな「夢ちらし寿司」で贅沢ランチ。</p></div><div class="ranking-card"><span>🥉</span><h5 class="font-bold inline">レストラン スコット 本店</h5><p class="text-sm text-gray-700 mt-1">通し営業が嬉しい老舗。伝統のビーフシチュー。</p></div></div></div></div>
+                    <div id="gourmet-day1" class="mb-10"><h3 class="font-magazine-title text-2xl mb-4"><span class="marker">1日目ランチ候補 (熱海銀座周辺)</span></h3><div class="space-y-8"><div><h4 class="font-bold text-lg underline decoration-wavy" style="text-decoration-color: var(--color-accent-yellow);">海鮮・定食</h4><div class="gourmet-card"><h5 class="font-bold">熱海銀座 おさかな食堂</h5><p class="text-sm text-gray-700">見た目も楽しい海鮮丼が人気！</p><p class="text-xs text-gray-500">予算: ¥2,000〜 / <a href="https://www.osakana-atami.com/" target="_blank" rel="noopener noreferrer">公式サイト</a></p></div><div class="gourmet-card"><h5 class="font-bold">囲炉茶屋</h5><p class="text-sm text-gray-700">囲炉裏で自分で焼くスタイルが楽しい！</p><p class="text-xs text-gray-500">予算: ¥2,000〜 / <a href="https://irorichaya.com/" target="_blank" rel="noopener noreferrer">公式サイト</a></p></div></div><div><h4 class="font-bold text-lg underline decoration-wavy" style="text-decoration-color: var(--color-accent-yellow);">和食</h4><div class="gourmet-card"><h5 class="font-bold">食事処 ふくや</h5><p class="text-sm text-gray-700">名物の大きなアジフライはサクサクふわふわ！</p><p class="text-xs text-gray-500">予算: ¥1,500〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22000557/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div><div class="gourmet-card"><h5 class="font-bold">まぐろや</h5><p class="text-sm text-gray-700">駅前ビル地下のまぐろ専門店。鉄火丼が絶品。</p><p class="text-xs text-gray-500">予算: ¥2,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22000562/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div></div><div><h4 class="font-bold text-lg underline decoration-wavy" style="text-decoration-color: var(--color-accent-yellow);">そば</h4><div class="gourmet-card"><h5 class="font-bold">熱海 そば処 利久庵</h5><p class="text-sm text-gray-700">桜えびのかき揚げそばが名物。</p><p class="text-xs text-gray-500">予算: ¥1,500〜 / <a href="https://nbwb100.gorp.jp/" target="_blank" rel="noopener noreferrer">ぐるなび</a></p></div><div class="gourmet-card"><h5 class="font-bold">成木屋本店</h5><p class="text-sm text-gray-700">創業100年超の老舗。昔ながらの優しい味。</p><p class="text-xs text-gray-500">予算: ¥1,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22000547/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div></div><div><h4 class="font-bold text-lg underline decoration-wavy" style="text-decoration-color: var(--color-accent-yellow);">洋食</h4><div class="gourmet-card"><h5 class="font-bold">レストラン スコット本店</h5><p class="text-sm text-gray-700">昭和21年創業。伝統のビーフシチューは必食。</p><p class="text-xs text-gray-500">予算: ¥3,000〜 / <a href="https://www.restaurant-scott.com/" target="_blank" rel="noopener noreferrer">公式サイト</a></p></div><div class="gourmet-card"><h5 class="font-bold">宝亭</h5><p class="text-sm text-gray-700">カツカレーが有名な町の洋食屋さん。</p><p class="text-xs text-gray-500">予算: ¥1,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22000550/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div></div></div></div>
+                    <div id="gourmet-day2"><h3 class="font-magazine-title text-2xl mb-4"><span class="marker">2日目ランチ候補 (サンビーチ周辺)</span></h3><div class="space-y-8"><div><h4 class="font-bold text-lg underline decoration-wavy" style="text-decoration-color: var(--color-accent-yellow);">海鮮・定食</h4><div class="gourmet-card"><h5 class="font-bold">おさしみ食べ放題 熱海おさかなパラダイス</h5><p class="text-sm text-gray-700">お腹いっぱい海鮮を食べたいならココ！</p><p class="text-xs text-gray-500">予算: ¥3,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22036724/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div><div class="gourmet-card"><h5 class="font-bold">和食処 こばやし</h5><p class="text-sm text-gray-700">宝石箱みたいな「夢ちらし寿司」が名物。</p><p class="text-xs text-gray-500">予算: ¥2,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22000560/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div></div><div><h4 class="font-bold text-lg underline decoration-wavy" style="text-decoration-color: var(--color-accent-yellow);">和食</h4><div class="gourmet-card"><h5 class="font-bold">創作和食Ren</h5><p class="text-sm text-gray-700">落ち着いた雰囲気でおしゃれな和食ランチを。</p><p class="text-xs text-gray-500">予算: ¥2,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22033621/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div><div class="gourmet-card"><h5 class="font-bold">熱海 祇園</h5><p class="text-sm text-gray-700">金目鯛の煮付けが自慢。ごはんが進む！</p><p class="text-xs text-gray-500">予算: ¥2,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22000559/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div></div><div><h4 class="font-bold text-lg underline decoration-wavy" style="text-decoration-color: var(--color-accent-yellow);">そば</h4><div class="gourmet-card"><h5 class="font-bold">そば処 だるま</h5><p class="text-sm text-gray-700">サンビーチ近くの昔ながらのお蕎麦屋さん。</p><p class="text-xs text-gray-500">予算: ¥1,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22000556/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div><div class="gourmet-card"><h5 class="font-bold">そば処 木むら</h5><p class="text-sm text-gray-700">熱海駅すぐ。旅の最後にサクッと美味しい一杯。</p><p class="text-xs text-gray-500">予算: ¥1,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22000561/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div></div><div><h4 class="font-bold text-lg underline decoration-wavy" style="text-decoration-color: var(--color-accent-yellow);">洋食</h4><div class="gourmet-card"><h5 class="font-bold">Cafe&Restaurant Nagisa</h5><p class="text-sm text-gray-700">海辺の純喫茶で食べる鉄板ナポリタンが最高。</p><p class="text-xs text-gray-500">予算: ¥1,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22026362/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div><div class="gourmet-card"><h5 class="font-bold">レストラン フルヤ</h5><p class="text-sm text-gray-700">ボリューム満点のポークソテーが人気。</p><p class="text-xs text-gray-500">予算: ¥1,000〜 / <a href="https://tabelog.com/shizuoka/A2205/A220502/22000554/" target="_blank" rel="noopener noreferrer">食べログ</a></p></div></div></div></div>
+                </section>
+
+                <!-- P.15 - 持ち物リスト -->
+                <section id="packing-list" class="content-panel hidden font-handwriting">
+                     <h2 class="font-magazine-title text-3xl mb-8 border-b-4 pb-2" style="border-color: var(--color-accent-red);">P.15 - 旅の装備をチェック！</h2>
+                     <div class="space-y-8">
+                        <div><h3 class="font-magazine-title text-xl mb-4"><span class="marker">✅ 必須アイテム</span></h3><div class="space-y-3"><div class="checklist-item">衣類（1泊2日分、寝間着）</div><div class="checklist-item">常備薬、保険証、運転免許証</div><div class="checklist-item">充電器、モバイルバッテリー</div><div class="checklist-item">スキンケア用品（こだわりのもの）</div><div class="checklist-item">サンダル</div></div></div>
+                        <div><h3 class="font-magazine-title text-xl mb-4"><span class="marker">☀️ 避暑・夏対策グッズ</span></h3><div class="space-y-3"><div class="checklist-item">サングラス、帽子</div><div class="checklist-item">ハンディ扇風機</div><div class="checklist-item">日焼け止め</div><div class="checklist-item">汗拭きシート、タオル</div></div></div>
+                        <div><h3 class="font-magazine-title text-xl mb-4"><span class="marker">🍻 あると嬉しい！持ち寄りリスト (任意)</span></h3><div class="space-y-3"><div class="checklist-item">こだわりのビールや好きなお酒</div><div class="checklist-item">みんなで食べたいお菓子</div><div class="checklist-item">BBQで焼きたい特別な食材</div><div class="checklist-item">音楽スピーカー、カードゲーム</div></div></div>
+                     </div>
+                </section>
+
+                <!-- P.16 - リンク集 -->
+                <section id="links" class="content-panel hidden font-handwriting">
+                     <h2 class="font-magazine-title text-3xl mb-8 border-b-4 pb-2" style="border-color: var(--color-accent-red);">P.16 - お役立ちリンク集</h2>
+                     <div class="md:grid md:grid-cols-2 md:gap-x-8"><div class="space-y-4"><div class="link-item">🚠 <a href="https://www.atami-ropeway.jp/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">熱海ロープウェイ</a></div><div class="link-item">✨ <a href="https://www.atami-ropeway.jp/atami-hihoukan/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">熱海秘宝館</a></div><div class="link-item">🏰 <a href="https://atamijyo.com/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">熱海城</a></div><div class="link-item">🖼️ <a href="https://www.atami-trickart.com/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">熱海トリックアート迷宮館</a></div><div class="link-item">🐟 <a href="https://ito-marinetown.co.jp/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">道の駅伊東マリンタウン</a></div><div class="link-item">🛒 <a href="https://www.mv-tokai.co.jp/store/14341/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">マックスバリュ熱海店</a></div></div><div class="space-y-4 mt-4 md:mt-0"><div class="link-item">🏡 <a href="https://izuminpaku-yoyaku.com/atami/ajirohouse/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">あじろハウス</a></div><div class="link-item">⛩️ <a href="https://kinomiya.or.jp/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">来宮神社</a></div><div class="link-item">⛽ <a href="https://www.eneos.co.jp/ss/search/ss_detail.php?sscode=304191" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">ENEOS GS熱海SS (給油)</a></div><div class="link-item">🗄️ <a href="https://www.ataminews.gr.jp/useful/coinlocker/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">熱海駅ロッカー情報</a></div><div class="link-item">🏖️ <a href="https://www.ataminews.gr.jp/spot/123/" target="_blank" rel="noopener noreferrer" class="ml-2 font-bold">熱海サンビーチ</a></div></div></div>
+                </section>
+            </div>
+        </div>
+
     </div>
-
+    
     <script>
-        function showSection(sectionId) {
-            document.querySelectorAll('main > section').forEach(section => {
-                section.classList.add('hidden');
-            });
-            document.getElementById(sectionId).classList.remove('hidden');
-
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('tab-active');
-                tab.classList.add('tab-inactive');
-            });
-            const activeTab = document.querySelector(`.nav-tab[data-section="${sectionId}"]`);
-            activeTab.classList.add('tab-active');
-            activeTab.classList.remove('tab-inactive');
-        }
-
-        function showDay(dayId) {
-            document.querySelectorAll('#travel-plan .day-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            document.getElementById(`${dayId}-content`).classList.remove('hidden');
-
-            document.querySelectorAll('#travel-plan .day-tab').forEach(tab => {
-                tab.classList.remove('tab-active');
-                tab.classList.add('tab-inactive');
-            });
-            const activeTab = document.getElementById(`${dayId}-tab`);
-            activeTab.classList.add('tab-active');
-            activeTab.classList.remove('tab-inactive');
-        }
-
-        function showLunchDay(dayId) {
-            document.querySelectorAll('#lunch-candidates .lunch-day-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            document.getElementById(`${dayId}-lunch-content`).classList.remove('hidden');
-
-            document.querySelectorAll('#lunch-candidates .day-tab').forEach(tab => {
-                tab.classList.remove('tab-active');
-                tab.classList.add('tab-inactive');
-            });
-            const activeTab = document.getElementById(`${dayId}-lunch-tab`);
-            activeTab.classList.add('tab-active');
-            activeTab.classList.remove('tab-inactive');
+        function showTab(tabId) {
+            document.querySelectorAll('.content-panel').forEach(panel => panel.classList.add('hidden'));
+            document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+            document.getElementById(tabId).classList.remove('hidden');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
         }
         
-        const costsData = {
-            labels: ['交通費', '宿泊費', 'レンタカー代', 'BBQ食材費'],
-            data: [8500, 11575, 3750, 2500]
-        };
-
-        const costsChart = new Chart(document.getElementById('costsChart'), {
-            type: 'doughnut',
-            data: {
-                labels: costsData.labels,
-                datasets: [{
-                    label: '費用内訳 (1人あたり)',
-                    data: costsData.data,
-                    backgroundColor: [
-                        '#A0522D',
-                        '#D2B48C',
-                        '#C0C0C0',
-                        '#2E8B57'
-                    ],
-                    borderColor: '#FFFAF0',
-                    borderWidth: 4,
-                    hoverOffset: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: {
-                                size: 14,
-                                family: "'Noto Sans JP', sans-serif"
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed !== null) {
-                                    label += new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(context.parsed);
-                                }
-                                return label;
-                            }
-                        },
-                        titleFont: {
-                           size: 16,
-                           family: "'Noto Sans JP', sans-serif"
-                        },
-                        bodyFont: {
-                           size: 14,
-                           family: "'Noto Sans JP', sans-serif"
-                        },
-                        padding: 10,
-                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                        titleColor: 'white',
-                        bodyColor: 'white'
-                    }
+        window.addEventListener('load', () => {
+            const ctx = document.getElementById('costsChart');
+            if(!ctx) return;
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['宿泊費', '交通費', 'レンタカー代', 'BBQ食材費'],
+                    datasets: [{
+                        label: '費用内訳',
+                        data: [9260, 5500, 3000, 2500],
+                        backgroundColor: ['var(--color-accent-red)','var(--color-accent-blue)','var(--color-accent-yellow)','#a9a9a9'],
+                        borderColor: '#ffffff', borderWidth: 4, hoverOffset: 8
+                    }]
                 },
-                cutout: '60%'
-            }
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { font: { family: "'Klee One', cursive", size: 14 }}},
+                        tooltip: { callbacks: { label: function(context) { let label = context.label || ''; if (label) { label += ': '; } if (context.parsed !== null) { label += new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(context.parsed); } return label;}}}
+                    },
+                    cutout: '60%'
+                }
+            });
         });
     </script>
+
 </body>
 </html>
