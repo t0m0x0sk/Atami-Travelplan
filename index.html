@@ -104,6 +104,13 @@
         .link-item a:hover {
             color: var(--color-accent-red);
         }
+        .ranking-card {
+            background-color: #fff;
+            border: 2px solid var(--color-text);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 3px 3px 0px var(--color-accent-yellow);
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -123,7 +130,11 @@
                     <div class="border-l-2 h-24" style="border-color: var(--color-accent-red);"></div>
                 </div>
                 <div class="relative w-full h-[70vh] overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1507525428034-b723a996f6ea?q=80&w=2070&auto=format&fit=crop" alt="夏の熱海の海" class="absolute inset-0 w-full h-full object-cover film-filter" onerror="this.onerror=null;this.src='https://placehold.co/1200x800/3A6A7E/ffffff?text=Umi';">
+                    <!-- ▼画像URLを候補Cに差し替え▼ -->
+                    <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?q=80&w=1200&auto=format&fit=crop" 
+                         alt="夏のきらめく海" 
+                         class="absolute inset-0 w-full h-full object-cover film-filter" 
+                         onerror="this.onerror=null;this.src='https://placehold.co/1200x800/3A6A7E/ffffff?text=Natsu+no+Umi';">
                     <div class="absolute bottom-0 left-0 w-full p-4 md:p-6 bg-gradient-to-t from-black/80 to-transparent text-white">
                         <h2 class="text-3xl lg:text-4xl font-black leading-tight">総力特集：<br>最高のBBQを求めて。</h2>
                         <p class="mt-2 text-sm">伊東マリンタウンの海の幸、徹底解剖！</p>
